@@ -1,0 +1,189 @@
+.resize-handle {
+  position: relative;
+  background: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  z-index: 100;
+}
+
+/* Desktop - Vertical resize */
+.resize-handle.vertical {
+  width: 16px;
+  height: 100%;
+  cursor: col-resize;
+  flex-direction: column;
+}
+
+/* Mobile - Horizontal resize */
+.resize-handle.horizontal {
+  width: 100%;
+  height: 24px;
+  cursor: row-resize;
+  flex-direction: row;
+  margin: 0.5rem 0;
+}
+
+/* iPad - Both directions */
+.resize-handle.both {
+  width: 24px;
+  height: 100%;
+  cursor: col-resize;
+  flex-direction: column;
+  background: rgba(76, 175, 80, 0.05);
+}
+
+.resize-handle.both::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 40px;
+  height: 40px;
+  background: rgba(76, 175, 80, 0.1);
+  border-radius: 50%;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+.resize-handle.both:hover::after,
+.resize-handle.both.dragging::after {
+  opacity: 1;
+}
+
+.resize-handle:hover,
+.resize-handle.dragging {
+  background: rgba(76, 175, 80, 0.1);
+}
+
+.resize-handle:hover .handle-indicator span,
+.resize-handle.dragging .handle-indicator span {
+  background: #4caf50;
+  box-shadow: 0 0 8px #4caf50;
+}
+
+/* Handle Indicator - Vertical */
+.resize-handle.vertical .handle-indicator {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+/* Handle Indicator - Horizontal */
+.resize-handle.horizontal .handle-indicator {
+  display: flex;
+  flex-direction: row;
+  gap: 8px;
+}
+
+.resize-handle.horizontal .handle-indicator span {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #666;
+  transition: all 0.2s ease;
+}
+
+.handle-indicator span {
+  width: 4px;
+  height: 4px;
+  background: #666;
+  border-radius: 50%;
+  display: block;
+  transition: all 0.2s ease;
+}
+
+/* Handle Label for touch devices */
+.handle-label {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: #4caf50;
+  font-size: 20px;
+  font-weight: bold;
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+.resize-handle.both:hover .handle-label,
+.resize-handle.both.dragging .handle-label {
+  opacity: 1;
+}
+
+/* Tablet Styles (769px - 1024px) */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .resize-handle.both {
+    width: 32px;
+    background: rgba(76, 175, 80, 0.03);
+  }
+  
+  .handle-indicator span {
+    width: 6px;
+    height: 6px;
+  }
+  
+  .handle-label {
+    display: block;
+  }
+}
+
+/* Mobile Styles (up to 768px) */
+@media (max-width: 768px) {
+  .resize-handle.horizontal {
+    height: 32px;
+    background: rgba(76, 175, 80, 0.03);
+    border-radius: 16px;
+    margin: 0.25rem 0;
+  }
+  
+  .resize-handle.horizontal .handle-indicator {
+    gap: 12px;
+  }
+  
+  .resize-handle.horizontal .handle-indicator span {
+    width: 8px;
+    height: 8px;
+    background: #4caf50;
+    opacity: 0.5;
+  }
+  
+  .resize-handle.horizontal:hover .handle-indicator span,
+  .resize-handle.horizontal.dragging .handle-indicator span {
+    opacity: 1;
+    transform: scale(1.2);
+  }
+  
+  .handle-label {
+    display: none;
+  }
+}
+
+/* Light theme support */
+.light-theme .resize-handle:hover,
+.light-theme .resize-handle.dragging {
+  background: rgba(76, 175, 80, 0.05);
+}
+
+.light-theme .handle-indicator span {
+  background: #999;
+}
+
+.light-theme .resize-handle:hover .handle-indicator span,
+.light-theme .resize-handle.dragging .handle-indicator span {
+  background: #4caf50;
+}
+
+/* Landscape mode on mobile */
+@media (max-width: 768px) and (orientation: landscape) {
+  .resize-handle.horizontal {
+    display: flex; /* Show resize handle in landscape */
+  }
+  
+  .resize-handle.horizontal .handle-indicator span {
+    width: 6px;
+    height: 6px;
+  }
+}
