@@ -1,0 +1,112 @@
+.suggestion-overlay {
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  z-index: 9999;
+  animation: slideIn 0.3s ease;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.suggestion-box {
+  background: #2d2d2d;
+  border-radius: 12px;
+  padding: 1.5rem;
+  width: 400px;
+  max-width: calc(100vw - 4rem);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+  border: 1px solid #404040;
+}
+
+.suggestion-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.suggestion-header h3 {
+  color: #fff;
+  margin: 0;
+  font-size: 1.2rem;
+}
+
+.suggestions-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.suggestion-section h4 {
+  color: #999;
+  margin-bottom: 0.75rem;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.suggestion-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.suggestion-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem;
+  background: #404040;
+  border-radius: 6px;
+  color: #fff;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 0.9rem;
+}
+
+.suggestion-item:hover {
+  background: #4caf50;
+  transform: translateX(5px);
+}
+
+.suggestion-icon {
+  color: #4caf50;
+  font-size: 1.1rem;
+}
+
+.suggestion-item:hover .suggestion-icon {
+  color: #fff;
+}
+
+@media (max-width: 768px) {
+  .suggestion-overlay {
+    bottom: 1rem;
+    right: 1rem;
+    left: 1rem;
+  }
+
+  .suggestion-box {
+    width: 100%;
+    padding: 1rem;
+  }
+
+  .suggestion-header h3 {
+    font-size: 1rem;
+  }
+
+  .suggestion-item {
+    padding: 0.5rem;
+    font-size: 0.85rem;
+  }
+}

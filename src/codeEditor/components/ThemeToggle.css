@@ -1,0 +1,27 @@
+.theme-toggle {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background: #404040;
+  border: none;
+  border-radius: 6px;
+  color: #fff;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.theme-toggle:hover {
+  background: #505050;
+  transform: translateY(-1px);
+}
+
+@media (max-width: 768px) {
+  .theme-toggle span {
+    display: none;
+  }
+
+  .theme-toggle {
+    padding: 0.5rem;
+  }
+}
