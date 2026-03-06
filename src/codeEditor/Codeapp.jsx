@@ -126,7 +126,7 @@ document.addEventListener('DOMContentLoaded', function() {
   const [showSaved, setShowSaved] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [activeTab, setActiveTab] = useState('html');
-  const [editorSize, setEditorSize] = useState(55); // Percentage for editor width
+  const [editorSize, setEditorSize] = useState(2); // Percentage for editor width
   const [isDragging, setIsDragging] = useState(false);
   const [deviceMode, setDeviceMode] = useState('laptop'); // laptop, ipad, mobile
   const [isPanelCollapsed, setIsPanelCollapsed] = useState(false);
@@ -569,5 +569,6 @@ function closesaving(){
   
   );
 };
+
 
 export default App;
