@@ -369,11 +369,7 @@ function closesaving(){
     
     <div className={`app ${isFullscreen ? 'fullscreen' : ''} ${theme === 'vs-dark' ? 'dark-theme' : 'light-theme'}`}>
     
-      <Navbar 
-      userImage={user.profilepic}
-      logout={logout}
-      data={data}
-      uploadimg={uploadimg}/>
+      
       
       <header className="header bg-gradient-to-br from-gray-900 via-gray-900
       to-gray-800">
@@ -572,3 +568,4 @@ function closesaving(){
 
 
 export default App;
+
