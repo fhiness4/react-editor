@@ -348,7 +348,7 @@ function closesaving(){
     switch(mode) {
       case 'mobile':
         
-        setEditorSize(3);
+        setEditorSize(2.5);
         setIsPanelCollapsed(false);
         break;
       case 'ipad':
@@ -568,4 +568,5 @@ function closesaving(){
 
 
 export default App;
+
 
