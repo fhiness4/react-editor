@@ -40,7 +40,7 @@ const ResetPasswordPage = () => {
 			toast.success("Password reset successfully, redirecting to login page...");
 			setmessage(res.message);
 			setTimeout(() => {
-				navigate('/')
+				navigate('/login')
 			}, 1000);
 		  }else{
 			setisloading(false);
