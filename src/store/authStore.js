@@ -6,7 +6,11 @@ const API_URL = import.meta.env.MODE === "development" ? "https://auth-backend-w
 axios.defaults.withCredentials = true;
 
 export const useAuthStore = create((set) => ({
-	user: null,
+	user: {
+  name: "fin3sse oyewale",
+  email: "kaito@devio.dev",
+  createdAt: "January 12, 2025",
+},
 	data:null,
 	codefiles: [],
 	isAuthenticated: false,
