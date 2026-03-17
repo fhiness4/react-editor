@@ -85,8 +85,7 @@ const LoginPage = () => {
 			animate={{ opacity: 1, y: 0 }}
 			transition={{ duration: 0.5 }}
 			className='max-w-md w-full bg-gray-800 bg-opacity-50 backdrop-filter
-			backdrop-blur-x3 rounded-2xl shadow-xl overflow-hidden border
-			border-blue-900 p-2'
+			backdrop-blur-x3 rounded-2xl shadow-xl overflow-hidden p-2'
 		>
 			<div className='p-8'>
 				<h2 className='text-3xl font-bold mb-6 text-center bg-gradient-to-r
