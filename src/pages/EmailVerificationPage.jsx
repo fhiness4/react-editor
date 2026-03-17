@@ -70,7 +70,7 @@ const EmailVerificationPage = () => {
 			if(res.success){
 			toast.success("Email verified successfully");
                setTimeout(() => {
-				 navigate("/");
+				 navigate("/login");
 			   }, 2000);
 			}else{
 				setisloading(false)
