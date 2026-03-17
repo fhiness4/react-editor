@@ -4,12 +4,12 @@ import FloatingShape from "./components/FloatingShape";
 import SignUpPage from "./pages/SignUpPage";
 import LoginPage from "./pages/LoginPage";
 import EmailVerificationPage from "./pages/EmailVerificationPage";
-import Codeapp from "./codeEditor/Codeapp";
+import Codeapp from "./codeEditor/Editor";
 import ForgotPasswordPage from "./pages/ForgotPasswordPage";
 import ResetPasswordPage from "./pages/ResetPasswordPage";
-
+import DevioLanding from './pages/landingPage.jsx'
 import LoadingSpinner from "./components/LoadingSpinner";
-import DevioDashboard from './Dashboard.jsx'
+import DevioDashboard from './newDash.jsx'
 
 import { Toaster } from "react-hot-toast";
 import { useAuthStore } from "./store/authStore";
@@ -20,7 +20,7 @@ const ProtectedRoute = ({ children }) => {
 	const { isAuthenticated, user } = useAuthStore();
 
 	if (!isAuthenticated) {
-		return <Navigate to='/login' replace />;
+		return <Navigate to='/home' replace />;
 	}
 
 // 	if (!user.verified) {
@@ -51,7 +51,9 @@ function App() {
 	if (isCheckingAuth) return <LoadingSpinner />;
 
 	return (
-		<div
+		<main style={{
+		  backgroundSize: "cover"
+		}}
 			className='min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 flex items-center justify-center relative overflow-hidden'
 		 >
 			<FloatingShape color='bg-white-500' size='w-64 h-64' top='-5%' left='10%' delay={0} />
@@ -80,6 +82,14 @@ function App() {
 					element={
 						<RedirectAuthenticatedUser>
 							<SignUpPage />
+						</RedirectAuthenticatedUser>
+					}
+				/>
+				<Route
+					path='/home'
+					element={
+						<RedirectAuthenticatedUser>
+							<DevioLanding/>
 						</RedirectAuthenticatedUser>
 					}
 				/>
@@ -113,7 +123,7 @@ function App() {
 				<Route path='*' element={<Navigate to='/' replace />} />
 			</Routes>
 			<Toaster />
-		</div>
+		</main>
 	);
 }
 
