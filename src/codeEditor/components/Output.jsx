@@ -6,7 +6,7 @@ const Output = ({ output, setscreen}) => {
   return (
     <div className="output-wrapper">
       <div className="output-header">
-        <h3>📺 Output Preview</h3>
+       
       </div>
       <div className="output-frame">
         <iframe
