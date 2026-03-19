@@ -49,6 +49,7 @@ const ForgotPasswordPage = () => {
 	};
 
 	return (
+		<main className='items-center flex justify-center overflow-hidden min-h-screen'>
 		<motion.div
 			initial={{ opacity: 0, y: 20 }}
 			animate={{ opacity: 1, y: 0 }}
@@ -62,7 +63,7 @@ const ForgotPasswordPage = () => {
 				</h2>
 					<form onSubmit={handleSubmit}>
 						<p className='text-gray-300 mb-6 text-center'>
-							Enter your email address and we'll send you a link to reset your password.
+							Enter your email address and we'll send you a Code to reset your password.
 						</p>
 						<Input
 							icon={Mail}
@@ -95,6 +96,7 @@ const ForgotPasswordPage = () => {
 				</Link>
 			</div>
 		</motion.div>
+		</main>
 	);
 };
 export default ForgotPasswordPage;

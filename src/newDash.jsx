@@ -8,19 +8,7 @@ import { useAuthStore } from "./store/authStore";
 import {formatDate} from "./utils/date"
 import toast from "react-hot-toast";
 const url = 'https://auth-dusky-rho.vercel.app/api/auth';
-// ─── Data ─────────────────────────────────────────────────────────────────────
-const DEFAULT_USER = {
-  name: "Kaitura",
-  username: "0xkaito",
-  email: "kaito@devio.dev",
-  dateJoined: "January 12, 2025",
-  snippetsSaved: 67,
-  snippetLimit: 100,
-  plan: "Pro",
-};
-
-
-
+import './newDash.css'
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 const pct   = (v, m) => Math.round((v / m) * 100);
@@ -127,15 +115,13 @@ export default function DevioDashboard({ onBackToLanding, onOpenEditor }) {
   const [userData, setuserdata]= useState([])
 
   const [avatarSrc,   setAvatarSrc]   = useState(user.profilepic);
-  const [hovAvatar,   setHovAvatar]   = useState(false);
   const [savedBadge,  setSavedBadge]  = useState(false);
-  const [editName,    setEditName]    = useState(false);
-  const [nameInput,   setNameInput]   = useState(DEFAULT_USER.name);
   const [activeTab,   setActiveTab]   = useState("overview");
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [darkMode, setDarkMode] = useState(true);
   const fileRef = useRef(null);
+  const checkSidebar = window.innerWidth > 764 ? sidebarCollapsed ? 80: 240: 20
   
   
   async function gethtml() {
@@ -251,112 +237,6 @@ const QUICK_STATS = [
           onClick={() => setSidebarOpen(false)}
         />
       )}
-
-      {/* ── Global CSS ── */}
-      <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700;800&display=swap');
-        *, *::before, *::after { box-sizing: border-box; }
-        ::-webkit-scrollbar       { width: 4px; background: #04080f; }
-        ::-webkit-scrollbar-thumb { background: #1d4ed8; border-radius: 4px; }
-
-        /* Glass card */
-        .glass {
-          background: rgba(12, 20, 40, 0.7);
-          border: 1px solid rgba(59, 130, 246, 0.15);
-          backdrop-filter: blur(20px);
-          -webkit-backdrop-filter: blur(20px);
-        }
-        .glass-bright {
-          background: rgba(14, 22, 44, 0.85);
-          border: 1px solid rgba(59, 130, 246, 0.25);
-          backdrop-filter: blur(20px);
-        }
-        /* Neon glow utilities */
-        .glow-blue  { box-shadow: 0 0 16px rgba(59,130,246,0.55), 0 0 32px rgba(59,130,246,0.15); }
-        .glow-cyan  { box-shadow: 0 0 16px rgba(6,182,212,0.5),   0 0 32px rgba(6,182,212,0.12); }
-        .text-glow  { text-shadow: 0 0 24px rgba(59,130,246,0.7); }
-
-        /* Shine sweep */
-        .shine { position:relative; overflow:hidden; }
-        .shine::after { content:''; position:absolute; inset:0;
-          background:linear-gradient(108deg,transparent 38%,rgba(255,255,255,0.08) 50%,transparent 62%);
-          animation:shine-move 2.8s ease-in-out infinite; }
-        @keyframes shine-move { 0%{transform:translateX(-100%)} 100%{transform:translateX(100%)} }
-
-        /* Spin ring */
-        @keyframes spin-ring { to { transform: rotate(360deg); } }
-        .ring-spin { animation: spin-ring 10s linear infinite; }
-
-        /* Pulse dot */
-        @keyframes pulse-glow { 0%,100%{opacity:1; transform:scale(1)} 50%{opacity:0.5; transform:scale(0.8)} }
-
-        /* Fade up */
-        @keyframes fade-up { from{opacity:0;transform:translateY(12px)} to{opacity:1;transform:none} }
-        .fade-up { animation: fade-up 0.5s ease forwards; }
-
-        /* Tab transition */
-        .tab-active {
-          background: rgba(59,130,246,0.15);
-          border-color: rgba(59,130,246,0.4) !important;
-          color: #93c5fd;
-        }
-
-        /* Avatar hover */
-        .av-hover-overlay { opacity: 0; transition: opacity 0.2s; }
-        .av-wrap:hover .av-hover-overlay { opacity: 1; }
-
-        /* Stat card hover */
-        .stat-card { transition: all 0.25s ease; }
-        .stat-card:hover { transform: translateY(-3px); border-color: rgba(59,130,246,0.4) !important; }
-
-        /* Progress bar animation */
-        @keyframes grow-bar { from{width:0} }
-        .bar-anim { animation: grow-bar 1.2s cubic-bezier(0.4,0,0.2,1) forwards; }
-
-        /* Badge pulse */
-        @keyframes badge-pulse { 0%,100%{opacity:1} 50%{opacity:0.5} }
-
-        /* Theme toggle */
-        .theme-toggle-track { transition: background 0.3s ease; }
-        .theme-toggle-thumb { transition: transform 0.3s cubic-bezier(0.4,0,0.2,1), background 0.3s ease; }
-
-        /* Light theme overrides */
-        .light-mode .glass {
-          background: rgba(255,255,255,0.8);
-          border-color: rgba(59,130,246,0.2);
-        }
-        .light-mode .glass-bright {
-          background: rgba(236,242,255,0.97);
-          border-color: rgba(59,130,246,0.25);
-        }
-        .light-mode .text-gray-100  { color: #0f172a !important; }
-        .light-mode .text-gray-200  { color: #1e293b !important; }
-        .light-mode .text-gray-300  { color: #334155 !important; }
-        .light-mode .text-gray-400  { color: #475569 !important; }
-        .light-mode .text-gray-500  { color: #64748b !important; }
-        .light-mode .text-gray-600  { color: #64748b !important; }
-        .light-mode .text-gray-700  { color: #94a3b8 !important; }
-        .light-mode .text-white     { color: #0f172a !important; }
-        .light-mode .bg-gray-800\/70 { background: rgba(203,213,225,0.5) !important; }
-        .light-mode ::-webkit-scrollbar { background: #f0f4ff; }
-        .light-mode ::-webkit-scrollbar-thumb { background: #93c5fd; }
-
-        /* Sidebar */
-        .sidebar { transition: width 0.28s cubic-bezier(0.4,0,0.2,1), transform 0.28s cubic-bezier(0.4,0,0.2,1); }
-        .sidebar-label { transition: opacity 0.18s ease, width 0.18s ease; white-space: nowrap; overflow: hidden; }
-        .nav-item { transition: all 0.18s ease; }
-        .nav-item:hover { background: rgba(59,130,246,0.1); border-color: rgba(59,130,246,0.35) !important; }
-        .nav-item.active { background: rgba(59,130,246,0.15); border-color: rgba(59,130,246,0.4) !important; color: #93c5fd; }
-        .nav-item.active .nav-icon { color: #3b82f6; text-shadow: 0 0 10px rgba(59,130,246,0.7); }
-        .nav-item.logout-item:hover { background: rgba(239,68,68,0.08); border-color: rgba(239,68,68,0.25) !important; }
-
-        @media (max-width: 767px) {
-          .sidebar-mobile-hidden { transform: translateX(-100%); }
-          .sidebar-mobile-shown  { transform: translateX(0); }
-        }
-      `}</style>
-
-
       {/* ══════════════════════════════════════════════════════
           TOP BAR
       ══════════════════════════════════════════════════════ */}
@@ -403,10 +283,10 @@ const QUICK_STATS = [
         {/* ── SIDEBAR ── */}
         <aside
           className={`sidebar glass-bright border-r border-blue-950/60 flex flex-col shrink-0
-            fixed md:sticky top-14 h-[calc(100vh-56px)] overflow-y-auto overflow-x-hidden
+             md:fixed top-14 h-[calc(100vh-56px)] overflow-x-hidden
             ${sidebarOpen ? "sidebar-mobile-shown" : "sidebar-mobile-hidden"}
             md:translate-x-0
-          `}
+            `}
           style={{ zIndex: 60, width: sidebarCollapsed ? 56 : 220, top: 56 }}
         >
           {/* ── DEVIO branding header ── */}
@@ -546,7 +426,8 @@ const QUICK_STATS = [
       {/* ══════════════════════════════════════════════════════
           MAIN CONTENT
       ══════════════════════════════════════════════════════ */}
-      <main className="relative flex-1 min-w-0 px-4 sm:px-6 py-6 sm:py-8 pb-20 space-y-5" style={{ zIndex: 10 }}>
+      <main
+      className="relative flex-1 min-w-0 px-4 sm:px-6 py-6 sm:py-8 pb-20 space-y-5" style={{ zIndex: 10 , paddingLeft: checkSidebar }}>
 
         {/* ── PROFILE HERO ────────────────────────────────────────
             Full-width banner with avatar, name, info + editor CTA

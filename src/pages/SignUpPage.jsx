@@ -72,6 +72,7 @@ const SignUpPage = () => {
 		}
 	};
 	return (
+		<main className='items-center flex justify-center overflow-hidden min-h-screen'>
 		<motion.div
 			initial={{ opacity: 0, y: 20 }}
 			animate={{ opacity: 1, y: 0 }}
@@ -133,6 +134,7 @@ const SignUpPage = () => {
 				</p>
 			</div>
 		</motion.div>
+		</main>
 	);
 };
 export default SignUpPage;

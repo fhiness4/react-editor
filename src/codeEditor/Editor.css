@@ -398,7 +398,7 @@ button {
 .devio-output-panel {
   display: flex;
   flex-direction: column;
-  flex: 1 1 var(--editor-size);
+  flex: var(--editor-size);
   overflow: hidden;
   background: var(--bg);
   min-width: 0;
@@ -496,7 +496,7 @@ button {
 
 /* Mobile bottom nav */
 .devio-mobile-nav {
-  transform: translatey(-30px);
+  transform: translatey(-20px);
   display: flex;
   background: var(--surface);
   border-top: 1px solid var(--border);
@@ -672,7 +672,7 @@ button {
 }
 
 /* Mobile — single pane layout */
-@media (max-width: 767px) {
+@media (max-width: 890px) {
   /* Hide desktop-only elements */
   .devio-desktop-only { display: none !important; }
 

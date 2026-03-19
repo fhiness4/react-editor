@@ -2,7 +2,6 @@ import React from 'react';
 import './Output.css';
 
 const Output = ({ output, setscreen}) => {
-  console.log(screen)
   return (
     <div className="output-wrapper">
       <div className="output-header">

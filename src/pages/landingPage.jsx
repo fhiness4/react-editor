@@ -351,35 +351,6 @@ export default function DevioLanding({ onEnterDashboard }) {
 
   return (
     <div className="min-h-screen bg-gray-950 text-gray-100 overflow-x-hidden" style={{ fontFamily: "'JetBrains Mono','Fira Code',monospace" }}>
-      <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700;800&display=swap');
-        *, *::before, *::after { box-sizing: border-box; }
-        ::-webkit-scrollbar { width: 5px; background: #060b14; }
-        ::-webkit-scrollbar-thumb { background: #1d4ed8; border-radius: 4px; }
-        .glow-blue  { box-shadow: 0 0 20px rgba(59,130,246,0.5), 0 0 40px rgba(59,130,246,0.1); }
-        .text-glow  { text-shadow: 0 0 24px rgba(59,130,246,0.65); }
-        .card-hover { transition: all 0.3s ease; }
-        .card-hover:hover { transform: translateY(-4px); box-shadow: 0 10px 36px rgba(59,130,246,0.18); }
-        @keyframes float      { 0%,100%{transform:translateY(0)}   50%{transform:translateY(-10px)} }
-        @keyframes pulse-ring { 0%{transform:scale(1);opacity:1}  100%{transform:scale(2.2);opacity:0} }
-        @keyframes slide-r    { 0%{transform:translateX(-100%)}   100%{transform:translateX(100%)} }
-        @keyframes scanline   { 0%{top:0%} 100%{top:100%} }
-        @keyframes fade-up    { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:none} }
-        .float-anim { animation: float 4.5s ease-in-out infinite; }
-        .shine { position:relative; overflow:hidden; }
-        .shine::after { content:''; position:absolute; inset:0;
-          background:linear-gradient(105deg,transparent 40%,rgba(255,255,255,0.07) 50%,transparent 60%);
-          animation:slide-r 3s ease-in-out infinite; }
-        .nav-ul { position:relative; }
-        .nav-ul::after { content:''; position:absolute; bottom:-3px; left:0; right:0; height:1px;
-          background:#3b82f6; transform:scaleX(0); transition:transform 0.22s ease; transform-origin:left; }
-        .nav-ul:hover::after { transform:scaleX(1); }
-        .plan-card { transition: all 0.3s ease; }
-        .plan-card:hover { transform: translateY(-6px); }
-        .ai-badge { background: linear-gradient(135deg, rgba(139,92,246,0.3), rgba(59,130,246,0.2));
-          border: 1px solid rgba(139,92,246,0.45); }
-      `}</style>
-
       {/* ── NAV ── */}
       <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${scrolled ? "bg-gray-950/95 backdrop-blur-md border-b border-blue-900/40 shadow-lg" : "bg-transparent"}`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 flex items-center justify-between h-16">

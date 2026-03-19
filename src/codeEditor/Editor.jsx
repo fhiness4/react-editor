@@ -417,7 +417,7 @@ document.addEventListener('DOMContentLoaded', function() {
             
             
             
-                  <div className="devio-tab-bar">
+         <div className="devio-tab-bar">
       {[
         { id: 'html', label: 'HTML' },
         { id: 'css',  label: 'CSS'  },
@@ -433,19 +433,17 @@ document.addEventListener('DOMContentLoaded', function() {
         </button>
       ))}
     </div>
-    
-    
-    
-                <div className="devio-editor-body">
-      {activeTab === 'html' && <CodeEditor language="html"       value={html} onChange={setHtml} theme={theme} />}
-      {activeTab === 'css'  && <CodeEditor language="css"        value={css}  onChange={setCss}  theme={theme} />}
-      {activeTab === 'js'   && <CodeEditor language="javascript" value={js}   onChange={setJs}   theme={theme} />}
-    </div>
+              <div className="devio-editor-body">
+                {activeTab === 'html' && <CodeEditor language="html"       value={html} onChange={setHtml} theme={theme} />}
+                {activeTab === 'css'  && <CodeEditor language="css"        value={css}  onChange={setCss}  theme={theme} />}
+                {activeTab === 'js'   && <CodeEditor language="javascript" value={js}   onChange={setJs}   theme={theme} />}
+              </div>
             </div>
 
             <div className={`devio-output-panel${isPanelCollapsed ? ' expanded' : ''}`} id="editor-panel" 
             style={{ 
-            '--editor-size': `${editorSize}%`
+            '--editor-size': `${editorSize}%`,
+            '--panel-size': `${100 - editorSize}%`
           }}>
               <div className="devio-output-bar">
                 <span className="devio-output-label">
@@ -490,10 +488,10 @@ document.addEventListener('DOMContentLoaded', function() {
     
     
               <div className="devio-editor-body">
-      {activeTab === 'html' && <CodeEditor language="html"       value={html} onChange={setHtml} theme={theme} />}
-      {activeTab === 'css'  && <CodeEditor language="css"        value={css}  onChange={setCss}  theme={theme} />}
-      {activeTab === 'js'   && <CodeEditor language="javascript" value={js}   onChange={setJs}   theme={theme} />}
-    </div>
+                {activeTab === 'html' && <CodeEditor language="html"       value={html} onChange={setHtml} theme={theme} />}
+                {activeTab === 'css'  && <CodeEditor language="css"        value={css}  onChange={setCss}  theme={theme} />}
+                {activeTab === 'js'   && <CodeEditor language="javascript" value={js}   onChange={setJs}   theme={theme} />}
+              </div>
             </div>
 
             {/* Preview pane — always mounted, never destroyed */}

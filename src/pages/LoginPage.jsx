@@ -41,7 +41,7 @@ const LoginPage = () => {
         checkAuth(res);
 				seterr(res.message);
 				setTimeout(() => {
-					navigate('/', {state:{data:res}})
+					navigate('/dashboard', {state:{data:res}})
 				}, 1000);
 			  
 			  }else{
@@ -80,6 +80,7 @@ const LoginPage = () => {
 
 	
 	return (
+		<main className='items-center flex justify-center overflow-hidden min-h-screen'>
 		<motion.div
 			initial={{ opacity: 0, y: 20 }}
 			animate={{ opacity: 1, y: 0 }}
@@ -142,6 +143,7 @@ const LoginPage = () => {
 				</p>
 			</div>
 		</motion.div>
+		</main>
 	);
 };
 export default LoginPage;

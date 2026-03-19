@@ -20,7 +20,7 @@ const ProtectedRoute = ({ children }) => {
 	const { isAuthenticated, user } = useAuthStore();
 
 	if (!isAuthenticated) {
-		return <Navigate to='/home' replace />;
+		return <Navigate to='/' replace />;
 	}
 
 // 	if (!user.verified) {
@@ -35,7 +35,7 @@ const RedirectAuthenticatedUser = ({ children }) => {
 	const { isAuthenticated, user } = useAuthStore();
 
 	if (isAuthenticated && user.verified) {
-		return <Navigate to='/' replace />;
+		return <Navigate to='/dashboard' replace />;
 	}
 
 	return children;
@@ -54,7 +54,7 @@ function App() {
 		<main style={{
 		  backgroundSize: "cover"
 		}}
-			className='min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 flex items-center justify-center relative overflow-hidden'
+			className='min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 relative overflow-hidden'
 		 >
 			<FloatingShape color='bg-white-500' size='w-64 h-64' top='-5%' left='10%' delay={0} />
 			<FloatingShape color='bg-white-500' size='w-48 h-48' top='70%' left='80%' delay={5} />
@@ -62,7 +62,7 @@ function App() {
 
 			<Routes>
 				<Route
-					path='/'
+					path='/dashboard'
 					element={
 						<ProtectedRoute>
 							<DevioDashboard />
@@ -86,7 +86,7 @@ function App() {
 					}
 				/>
 				<Route
-					path='/home'
+					path='/'
 					element={
 						<RedirectAuthenticatedUser>
 							<DevioLanding/>
