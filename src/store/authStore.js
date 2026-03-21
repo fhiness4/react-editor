@@ -1,16 +1,9 @@
 import { create } from "zustand";
-import axios from "axios";
-const url = 'https://auth-dusky-rho.vercel.app';
-const API_URL = import.meta.env.MODE === "development" ? "https://auth-backend-woad.vercel.app" : "/api/auth";
+const url = `${import.meta.env.VITE_API_URL}/api/auth`;
 
-axios.defaults.withCredentials = true;
 
 export const useAuthStore = create((set) => ({
-	user: {
-  name: "fin3sse oyewale",
-  email: "kaito@devio.dev",
-  createdAt: "January 12, 2025",
-},
+	user: null,
 	data:null,
 	codefiles: [],
 	isAuthenticated: false,

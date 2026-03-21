@@ -8,7 +8,7 @@ import { Link, useNavigate } from "react-router-dom";
 const ForgotPasswordPage = () => {
 	const [email, setEmail] = useState("");
 	const [err, seterr] = useState("");
-  const url = 'https://auth-dusky-rho.vercel.app/api/auth'
+  const url = `${import.meta.env.VITE_API_URL}/api/auth`
 	const [isLoading, setisloading] = useState(false);
 	const navigate = useNavigate();
    

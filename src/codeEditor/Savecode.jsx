@@ -1,16 +1,11 @@
-import { useAuthStore } from "../store/authStore";
 import React, { useState, useRef, useEffect } from 'react';
 import toast from "react-hot-toast";
 import './App.css';
-//const url = 'https://auth-dusky-rho.vercel.app';
-//{name, del}
 const Saving = ({onclose, html, css, js, userId}) => {
-  const { user, data, addcodes, codefiles,
-  isLoading, message} = useAuthStore();
   const [name, setName] = useState("");
   const [saving, setsaving]= useState(false)
   
-  const url = 'https://auth-dusky-rho.vercel.app';
+  const url = import.meta.env.VITE_API_URL;
    async function createhtml() {
      setsaving(true)
     try {
@@ -21,12 +16,12 @@ const Saving = ({onclose, html, css, js, userId}) => {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-  html: html,
-  name: name,
-  css: css,
-  js: js,
-  userId: userId
-})
+            html: html,
+            name: name,
+            css: css,
+            js: js,
+            userId: userId
+   })
         });
         const data = await response.json();
 

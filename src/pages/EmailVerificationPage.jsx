@@ -11,7 +11,7 @@ const EmailVerificationPage = () => {
 	const [err, seterr] = useState("");
 	const location = useLocation();
 	const useremail = location.state.data;
-	const url = 'https://auth-dusky-rho.vercel.app/api/auth'
+	const url = `${import.meta.env.VITE_API_URL}/api/auth`
 	const navigate = useNavigate();
 	console.log(useremail)
 

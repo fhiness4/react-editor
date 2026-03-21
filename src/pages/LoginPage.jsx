@@ -12,7 +12,7 @@ const LoginPage = () => {
 	const [isLoading, setisloading] = useState(false);
 	const navigate = useNavigate()
 	const [err, seterr] = useState("");
-	const url = 'https://auth-dusky-rho.vercel.app/api/auth'
+	const url = `${import.meta.env.VITE_API_URL}/api/auth`
     const {checkAuth} = useAuthStore()
 
 	const handleLogin = async (e) => {
@@ -92,6 +92,7 @@ const LoginPage = () => {
 				<h2 className='text-3xl font-bold mb-6 text-center bg-gradient-to-r
 				from-blue-400 to-blue-500 text-transparent bg-clip-text'>
 					Welcome Back 
+					
 				</h2>
          
 
@@ -125,8 +126,8 @@ const LoginPage = () => {
 						whileTap={{ scale: 0.98 }}
 						className='w-full py-3 px-4 bg-gradient-to-r from-blue-500 to-blue-600
 						text-white font-bold rounded-lg shadow-lg hover:from-blue-600
-						hover:to-blu3-700 focus:outline-none focus:ring-2 focus:ring-blue-500
-						focus:ring-offset-2 focus:ring-offset-gray-900 transition duration-200'
+						hover:to-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500
+						focus:ring-offset-2 focus:ring-offset-blue-500 transition duration-200'
 						type='submit'
 						disabled={isLoading}
 					>

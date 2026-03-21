@@ -7,14 +7,14 @@ import { Link, useNavigate } from "react-router-dom";
 import { useAuthStore } from "./store/authStore";
 import {formatDate} from "./utils/date"
 import toast from "react-hot-toast";
-const url = 'https://auth-dusky-rho.vercel.app/api/auth';
+const url = `${import.meta.env.VITE_API_URL}/api/auth`;
 import './newDash.css'
 
-// ─── Helpers ──────────────────────────────────────────────────────────────────
+// helpers
 const pct   = (v, m) => Math.round((v / m) * 100);
 const gColor = (p)   => p >= 85 ? "#ef4444" : p >= 60 ? "#f59e0b" : "#3b82f6";
 
-// ─── Animated number ──────────────────────────────────────────────────────────
+//Animated number
 function AnimNum({ target }) {
   const [val, setVal] = useState(0);
   useEffect(() => {
@@ -32,7 +32,7 @@ function AnimNum({ target }) {
   return <span>{val || target}</span>;
 }
 
-// ─── Snippet Gauge ────────────────────────────────────────────────────────────
+//Snippet
 function SnippetGauge({ saved}) {
   const percent = pct(saved, 100);
   const color   = gColor(percent);
@@ -62,14 +62,14 @@ function SnippetGauge({ saved}) {
   );
 }
 
-// ─── Cursor blink ─────────────────────────────────────────────────────────────
+//Cursor
 function Cursor() {
   const [on, setOn] = useState(true);
   useEffect(() => { const t = setInterval(() => setOn(v => !v), 520); return () => clearInterval(t); }, []);
   return <span style={{ opacity: on ? 1 : 0, color: "#3b82f6" }}>█</span>;
 }
 
-// ─── Editor preview (animated) ────────────────────────────────────────────────
+//Editor preview
 const EDITOR_LINES = [
   { txt: '<div class="hero">',        c: "#60a5fa" },
   { txt: '  <h1>Hello World</h1>',   c: "#e2e8f0" },
@@ -101,15 +101,14 @@ function EditorPreview() {
 }
 
     
-
-// ─── Sidebar nav items ────────────────────────────────────────────────────────
+//Sidebar
 const NAV_ITEMS = [
   { id: "overview",  icon: "⬡", label: "Overview"  },
   { id: "snippets",  icon: "◻", label: "Snippets"  },
   { id: "editor",    icon: "⟨/⟩", label: "Editor" , href:"/editor" },
 ];
 
-// ─── Main Dashboard ───────────────────────────────────────────────────────────
+//Main Dashboard
 export default function DevioDashboard({ onBackToLanding, onOpenEditor }) {
   const {addcodes, user, data,  logout, getuser, uploadimg, codefiles} = useAuthStore();
   const [userData, setuserdata]= useState([])
@@ -126,7 +125,7 @@ export default function DevioDashboard({ onBackToLanding, onOpenEditor }) {
   
   async function gethtml() {
       const response = await
-      fetch(`https://auth-dusky-rho.vercel.app/api/code/getuser-html?codeid=${user._id}`,{
+      fetch(`${import.meta.env.VITE_API_URL}/api/code/getuser-html?codeid=${user._id}`,{
       method: "GET",
         mode: "cors",
         headers:{

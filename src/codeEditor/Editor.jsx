@@ -12,7 +12,7 @@ import {
 import './Editor.css';
 import { useAuthStore } from '../store/authStore';
 
-const url = 'https://auth-dusky-rho.vercel.app/api/auth';
+const url = import.meta.env.VITE_API_URL;
 import toast from 'react-hot-toast';
 
 /* ─── Responsive hook ────────────────────────────────────────────────────── */
@@ -210,7 +210,7 @@ document.addEventListener('DOMContentLoaded', function() {
   async function gethtml() {
     setShowSaved(!showSaved);
     const response = await fetch(
-      `https://auth-dusky-rho.vercel.app/api/code/getuser-html?codeid=${user._id}`,
+      `${url}/api/code/getuser-html?codeid=${user._id}`,
       { method: 'GET', mode: 'cors', headers: { 'content-Type': 'application/json' } }
     );
     const res = await response.json();
@@ -249,10 +249,9 @@ document.addEventListener('DOMContentLoaded', function() {
   const deleteCode = async (codeid, userid) => {
     try {
       setShowSaved(!showSaved);
-      const urll = 'https://auth-dusky-rho.vercel.app';
       toast.success('deleting code....');
       const response = await fetch(
-        `${urll}/api/code/delete-html?userId=${userid}&_id=${codeid}`,
+        `${url}/api/code/delete-html?userId=${userid}&_id=${codeid}`,
         { method: 'DELETE', headers: { 'Content-Type': 'application/json' } }
       );
       const data = await response.json();

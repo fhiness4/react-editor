@@ -636,7 +636,7 @@ export default function DevioLanding({ onEnterDashboard }) {
           <h2 className="text-3xl sm:text-5xl font-extrabold mb-6 text-white">Start coding in <span className="text-blue-400 text-glow">seconds.</span></h2>
           <p className="text-gray-400 text-sm mb-10 leading-relaxed">No installs. No setup. Just open DEVIO and write code the world can see, run, and review.</p>
           <Link
-              to='/signup' onClick={onEnterDashboard} className="shine px-10 py-4 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-xl glow-blue transition-all text-sm">
+              to='/signup' className="shine px-10 py-4 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-xl glow-blue transition-all text-sm overflow-hidden">
             Get Started — it's free →
           </Link>
         </RevealSection>
