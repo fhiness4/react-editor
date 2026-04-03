@@ -4,12 +4,16 @@ import FloatingShape from "./components/FloatingShape";
 import SignUpPage from "./pages/SignUpPage";
 import LoginPage from "./pages/LoginPage";
 import EmailVerificationPage from "./pages/EmailVerificationPage";
+import DevioExplore from "./appPages/GuestExplore.jsx"
+import DevioExplorer from "./appPages/Explore.jsx"
 import Codeapp from "./codeEditor/Editor";
+import DevioPost from "./appPages/postPage.jsx"
+import CodeShare from "./codeEditor/EditorShare.jsx";
 import ForgotPasswordPage from "./pages/ForgotPasswordPage";
 import ResetPasswordPage from "./pages/ResetPasswordPage";
 import DevioLanding from './pages/landingPage.jsx'
 import LoadingSpinner from "./components/LoadingSpinner";
-import DevioDashboard from './newDash.jsx'
+import DevioDashboard from './appPages/newDash.jsx'
 
 import { Toaster } from "react-hot-toast";
 import { useAuthStore } from "./store/authStore";
@@ -69,12 +73,44 @@ function App() {
 						</ProtectedRoute>
 					}
 				/>
-								<Route
+					<Route
 					path='/editor'
 					element={
 						<ProtectedRoute>
 							<Codeapp />
 						</ProtectedRoute>
+					}
+				/>
+					<Route
+					path='/explorer'
+					element={
+						<ProtectedRoute>
+							<DevioExplorer />
+						</ProtectedRoute>
+					}
+				/>
+					<Route
+					path='/post'
+					element={
+						<ProtectedRoute>
+							<DevioPost />
+						</ProtectedRoute>
+					}
+				/>
+	        <Route
+					path='/share'
+					element={
+						<RedirectAuthenticatedUser>
+							<CodeShare />
+						</RedirectAuthenticatedUser>
+					}
+				/>
+					<Route
+					path='/explore'
+					element={
+						<RedirectAuthenticatedUser>
+							<DevioExplore />
+						</RedirectAuthenticatedUser>
 					}
 				/>
 				<Route

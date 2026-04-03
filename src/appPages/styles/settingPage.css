@@ -1,0 +1,130 @@
+
+        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700;800&display=swap');
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        ::-webkit-scrollbar       { width: 4px; background: #04080f; }
+        ::-webkit-scrollbar-thumb { background: #1e3a6e; border-radius: 4px; }
+
+        .field-input {
+          transition: border-color 0.2s;
+        }
+        .field-input:focus {
+          border-color: rgba(59,130,246,0.5) !important;
+          outline: none;
+        }
+        .field-input::placeholder { color: #1e3a6e; }
+
+        .tab-btn {
+          display: flex; align-items: center; gap: 9px;
+          padding: 10px 14px; border-radius: 9px;
+          border: 1px solid rgba(59,130,246,0.08);
+          background: rgba(10,18,32,0.7); cursor: pointer;
+          font-family: inherit; font-size: 12px; font-weight: 600;
+          color: #64748b; transition: all 0.15s;
+          width: 100%; text-align: left;
+        }
+        .tab-btn:hover:not(.active) {
+          color: #93c5fd;
+          background: rgba(59,130,246,0.08);
+          border-color: rgba(59,130,246,0.2);
+        }
+        .tab-btn.active {
+          color: #93c5fd;
+          background: rgba(59,130,246,0.15);
+          border-color: rgba(59,130,246,0.35);
+        }
+
+        .btn-primary {
+          background: #1d4ed8; border: none;
+          border-radius: 10px; padding: 10px 24px;
+          color: #fff; font-size: 13px; font-weight: 700;
+          font-family: inherit; cursor: pointer;
+          box-shadow: 0 0 16px rgba(29,78,216,0.4);
+          transition: background 0.18s, box-shadow 0.18s;
+        }
+        .btn-primary:hover {
+          background: #2563eb;
+          box-shadow: 0 0 22px rgba(37,99,235,0.55);
+        }
+
+        .btn-ghost {
+          background: rgba(255,255,255,0.04);
+          border: 1px solid rgba(255,255,255,0.08);
+          border-radius: 10px; padding: 9px 18px;
+          color: #64748b; font-size: 13px;
+          font-family: inherit; cursor: pointer;
+          transition: all 0.15s;
+        }
+        .btn-ghost:hover { color: #93c5fd; border-color: rgba(59,130,246,0.3); }
+
+        /* layout */
+        .settings-wrap {
+          display: grid;
+          grid-template-columns: 192px 1fr;
+          gap: 24px;
+          max-width: 820px;
+          margin: 0 auto;
+          padding: 28px 20px 80px;
+          position: relative;
+          z-index: 10;
+        }
+        .settings-nav {
+          position: sticky;
+          top: 68px;
+          align-self: start;
+        }
+
+        /* two-col form grid */
+        .two-col {
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 16px;
+        }
+
+        /* fade-up */
+        @keyframes fade-up {
+          from { opacity: 0; transform: translateY(8px); }
+          to   { opacity: 1; transform: none; }
+        }
+        .fade-up { animation: fade-up 0.3s ease both; }
+
+        /* toast */
+        .saved-toast {
+          position: fixed; bottom: 24px; left: 50%;
+          transform: translateX(-50%);
+          background: #1d4ed8; color: #fff;
+          font-size: 12px; font-weight: 700;
+          padding: 10px 24px; border-radius: 99px;
+          box-shadow: 0 0 24px rgba(29,78,216,0.55);
+          z-index: 500; font-family: inherit;
+          animation: fade-up 0.3s ease;
+          white-space: nowrap;
+        }
+
+        .tab-nav {
+          display: flex;
+          flex-direction: column;
+          gap: 4px;
+        }
+
+        @media (max-width: 680px) {
+          .settings-wrap {
+            grid-template-columns: 1fr;
+            padding: 14px 14px 80px;
+          }
+          .settings-nav {
+            position: static;
+          }
+          .tab-nav {
+            flex-direction: row;
+            flex-wrap: wrap;
+            gap: 8px;
+          }
+          .tab-btn {
+            width: auto !important;
+            flex: 0 0 auto;
+          }
+          .two-col {
+            grid-template-columns: 1fr;
+          }
+        }
+      

@@ -1,0 +1,52 @@
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700;800&display=swap');
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        ::-webkit-scrollbar { width: 4px; background: #04080f; }
+        ::-webkit-scrollbar-thumb { background: #2d3748; border-radius: 4px; }
+
+        @keyframes dd-in    { from{opacity:0;transform:translateY(-6px)} to{opacity:1;transform:none} }
+        @keyframes modal-in { from{opacity:0;transform:scale(0.97)}      to{opacity:1;transform:scale(1)} }
+        @keyframes slide-up { from{transform:translateY(100%)}            to{transform:translateY(0)} }
+        @keyframes card-in  { from{opacity:0;transform:translateY(12px)}  to{opacity:1;transform:none} }
+
+        .fade-in { animation: card-in 0.38s ease both; }
+
+        /* responsive layout */
+        .exp-layout {
+          display: grid;
+          grid-template-columns: 200px 1fr;
+          gap: 24px;
+          max-width: 1160px;
+          margin: 0 auto;
+          padding: 24px 20px 64px;
+        }
+        .exp-sidebar {
+          display: flex;
+          flex-direction: column;
+          gap: 24px;
+          position: sticky;
+          top: 68px;
+          align-self: start;
+        }
+        .exp-grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+          gap: 16px;
+        }
+        /* Tablet */
+        @media (max-width: 900px) {
+          .exp-layout { grid-template-columns: 1fr; padding: 16px 16px 80px; }
+          .exp-sidebar { display: none; }
+          .exp-grid { grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 12px; }
+        }
+        /* Mobile */
+        @media (max-width: 540px) {
+          .exp-grid { grid-template-columns: 1fr; gap: 12px; }
+        }
+        /* Show label on wider screens */
+        @media (min-width: 480px) {
+          .nav-label { display: inline !important; }
+        }
+        .filter-pill { transition: all 0.15s ease; }
+        .filter-pill:hover { border-color: rgba(100, 116, 139, 0.4) !important; color: #94a3b8 !important; }
+        .sidebar-btn { transition: all 0.15s ease; }
+        .sidebar-btn:hover { border-color: rgba(100, 116, 139, 0.4) !important; color: #94a3b8 !important; background: rgba(100, 116, 139, 0.08) !important; }
