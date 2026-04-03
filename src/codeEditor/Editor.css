@@ -34,7 +34,7 @@
   padding: 0;
 }
 
- body, #root {
+body, #root {
   height: 100%;
   width: 100%;
   overflow: hidden !important;
@@ -43,9 +43,11 @@
   font-family: var(--font-mono);
   -webkit-font-smoothing: antialiased;
 }
-html{
+
+html {
   overflow-y: scroll;
 }
+
 button {
   font-family: var(--font-mono);
   cursor: pointer;
@@ -68,6 +70,229 @@ button {
 @keyframes dot-pulse {
   0%, 100% { box-shadow: 0 0 0 0   rgba(57, 211, 83, 0.5); }
   50%       { box-shadow: 0 0 0 4px rgba(57, 211, 83, 0);   }
+}
+
+/* Loading Animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(30px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes loadingProgress {
+  0% {
+    width: 0%;
+    opacity: 0;
+  }
+  20% {
+    opacity: 1;
+  }
+  50% {
+    width: 70%;
+  }
+  100% {
+    width: 100%;
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -1000px 0;
+  }
+  100% {
+    background-position: 1000px 0;
+  }
+}
+
+@keyframes pulseGlow {
+  0%, 100% {
+    box-shadow: 0 0 5px rgba(88, 166, 255, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 20px rgba(88, 166, 255, 0.6);
+  }
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+/* Email Loading Overlay */
+.email-loading-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, #0A0A0F 0%, #1a1a2e 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  animation: fadeIn 0.5s ease-out;
+}
+
+.email-loading-content {
+  text-align: center;
+  padding: 2rem;
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  min-width: 320px;
+  max-width: 90%;
+  animation: slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.email-loading-spinner {
+  animation: spin 1s linear infinite;
+  color: #58A6FF;
+  margin-bottom: 1rem;
+  filter: drop-shadow(0 0 5px rgba(88, 166, 255, 0.5));
+}
+
+.email-loading-content h3 {
+  color: #E0E0E0;
+  font-size: 1.5rem;
+  margin-bottom: 0.5rem;
+  font-family: var(--font-mono);
+  animation: pulseGlow 2s ease-in-out infinite;
+}
+
+.email-loading-content p {
+  color: #8B8B8B;
+  font-size: 0.9rem;
+  margin-bottom: 2rem;
+  animation: float 3s ease-in-out infinite;
+}
+
+.email-loading-progress {
+  width: 100%;
+  height: 2px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 2px;
+  overflow: hidden;
+  margin-bottom: 1rem;
+  position: relative;
+}
+
+.email-loading-bar {
+  height: 100%;
+  background: linear-gradient(90deg, #58A6FF, #00FFB2);
+  width: 0%;
+  animation: loadingProgress 1.8s ease-out forwards;
+  border-radius: 2px;
+  position: relative;
+  overflow: hidden;
+}
+
+.email-loading-bar::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(90deg, 
+    transparent, 
+    rgba(255, 255, 255, 0.3), 
+    transparent);
+  animation: shimmer 2s infinite;
+}
+
+.email-loading-text {
+  color: #8B8B8B;
+  font-size: 0.8rem;
+  font-family: var(--font-mono);
+  letter-spacing: 0.05em;
+}
+
+/* Responsive loading overlay */
+@media (max-width: 768px) {
+  .email-loading-content {
+    min-width: 280px;
+    padding: 1.5rem;
+  }
+  
+  .email-loading-content h3 {
+    font-size: 1.2rem;
+  }
+  
+  .email-loading-content p {
+    font-size: 0.8rem;
+    margin-bottom: 1.5rem;
+  }
+  
+  .email-loading-spinner {
+    width: 32px;
+    height: 32px;
+  }
+}
+
+@media (max-width: 480px) {
+  .email-loading-content {
+    min-width: 240px;
+    padding: 1.2rem;
+  }
+  
+  .email-loading-content h3 {
+    font-size: 1rem;
+  }
+  
+  .email-loading-text {
+    font-size: 0.7rem;
+  }
+}
+
+/* Spinning animation for loading state */
+.spinning {
+  animation: spin 1s linear infinite;
+}
+
+/* Button disabled state */
+button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none !important;
+}
+
+/* Copy button success animation */
+.devio-icon-btn svg {
+  transition: transform 0.2s ease;
+}
+
+.devio-icon-btn:hover svg {
+  transform: scale(1.1);
 }
 
 /* ─── App Shell ─────────────────────────────────────────────────────────── */
@@ -94,8 +319,9 @@ button {
   flex-shrink: 0;
   z-index: 30;
   gap: 0;
-  overflow: visible;         /* let children manage their own overflow */
+  overflow: visible;
 }
+
 .devio-header1 {
   display: flex;
   align-items: center;
@@ -107,14 +333,30 @@ button {
   border-bottom: 1px solid var(--border);
   z-index: 30;
   gap: 0;
-  overflow: visible;         /* let children manage their own overflow */
+  overflow: visible;
 }
+
+/* Responsive header adjustments */
+@media (max-width: 768px) {
+  .devio-header,
+  .devio-header1 {
+    padding: 0 8px;
+  }
+}
+
+@media (max-width: 480px) {
+  .devio-header,
+  .devio-header1 {
+    padding: 0 6px;
+  }
+}
+
 /* Left section */
 .devio-h-left {
   display: flex;
   align-items: center;
   gap: 8px;
-  flex: 0 0 auto;            /* don't grow, don't shrink — fixed size */
+  flex: 0 0 auto;
   overflow: visible;
 }
 
@@ -128,9 +370,15 @@ button {
 .devio-h-right {
   display: flex;
   align-items: center;
-  
   gap: 4px;
-  flex: 0 0 auto;            /* fixed — never wraps */
+  flex: 0 0 auto;
+}
+
+/* Responsive right section */
+@media (max-width: 768px) {
+  .devio-h-right {
+    gap: 2px;
+  }
 }
 
 /* Traffic lights */
@@ -161,6 +409,13 @@ button {
   margin: 0 2px;
 }
 
+/* Responsive divider */
+@media (max-width: 480px) {
+  .devio-h-divider {
+    margin: 0 1px;
+  }
+}
+
 /* Logo */
 .devio-logo {
   display: flex;
@@ -168,6 +423,13 @@ button {
   gap: 6px;
   flex-shrink: 0;
   user-select: none;
+}
+
+/* Responsive logo */
+@media (max-width: 480px) {
+  .devio-logo {
+    gap: 4px;
+  }
 }
 
 .devio-logo-icon {
@@ -192,6 +454,14 @@ button {
   white-space: nowrap;
 }
 
+/* Responsive logo text */
+@media (max-width: 480px) {
+  .devio-logo-text {
+    font-size: 10px;
+    letter-spacing: 0.12em;
+  }
+}
+
 .devio-cursor {
   display: inline-block;
   width: 7px;
@@ -214,10 +484,19 @@ button {
   max-width: 100px;
 }
 
-@media (max-width: 767px) {
+/* Responsive user badge */
+@media (max-width: 768px) {
   .devio-user-badge {
-    max-width: 72px;
+    max-width: 80px;
     font-size: 9px;
+  }
+}
+
+@media (max-width: 480px) {
+  .devio-user-badge {
+    max-width: 60px;
+    font-size: 8px;
+    letter-spacing: 0.03em;
   }
 }
 
@@ -231,6 +510,14 @@ button {
   border-radius: 5px;
   padding: 2px;
   flex-shrink: 0;
+  z-index: 4000000000000;
+}
+
+/* Responsive device group */
+@media (max-width: 768px) {
+  .devio-device-group {
+    padding: 1px;
+  }
 }
 
 .devio-device-btn {
@@ -242,14 +529,30 @@ button {
   border-radius: 3px;
   background: transparent;
   color: var(--text-dim);
-  transition: background 0.12s, color 0.12s;
+  transition: all 0.12s ease;
   flex-shrink: 0;
+}
+
+/* Responsive device button */
+@media (max-width: 768px) {
+  .devio-device-btn {
+    width: 24px;
+    height: 20px;
+  }
+}
+
+@media (max-width: 480px) {
+  .devio-device-btn {
+    width: 22px;
+    height: 18px;
+  }
 }
 
 .devio-device-btn:hover,
 .devio-device-btn.active {
   background: var(--green-dim);
   color: var(--green);
+  transform: scale(1.05);
 }
 
 /* Icon button */
@@ -263,14 +566,30 @@ button {
   border: 1px solid var(--border);
   background: transparent;
   color: var(--text-muted);
-  transition: background 0.12s, color 0.12s, border-color 0.12s;
+  transition: all 0.12s ease;
   flex-shrink: 0;
+}
+
+/* Responsive icon button */
+@media (max-width: 768px) {
+  .devio-icon-btn {
+    width: 28px;
+    height: 28px;
+  }
+}
+
+@media (max-width: 480px) {
+  .devio-icon-btn {
+    width: 26px;
+    height: 26px;
+  }
 }
 
 .devio-icon-btn:hover {
   background: var(--surface-hov);
   color: var(--text);
   border-color: var(--border-focus);
+  transform: translateY(-1px);
 }
 
 /* Save button */
@@ -288,12 +607,34 @@ button {
   font-weight: 700;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  transition: background 0.12s;
+  transition: all 0.12s ease;
   white-space: nowrap;
   flex-shrink: 0;
 }
 
-.devio-save-btn:hover { background: var(--green-dim); }
+/* Responsive save button */
+@media (max-width: 768px) {
+  .devio-save-btn {
+    padding: 0 8px;
+    height: 28px;
+    font-size: 9px;
+    letter-spacing: 0.08em;
+  }
+}
+
+@media (max-width: 480px) {
+  .devio-save-btn {
+    padding: 0 6px;
+    height: 26px;
+    font-size: 8px;
+    letter-spacing: 0.06em;
+  }
+}
+
+.devio-save-btn:hover { 
+  background: var(--green-dim);
+  transform: translateY(-1px);
+}
 
 /* ─── Main container ────────────────────────────────────────────────────── */
 .devio-main {
@@ -321,7 +662,15 @@ button {
   overflow: hidden;
   background: var(--surface);
   border-right: 1px solid var(--border);
-  transition: flex 0.2s ease, min-width 0.2s ease, max-width 0.2s ease;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  height: 100%;
+}
+
+/* Responsive editor panel */
+@media (max-width: 768px) {
+  .devio-editor-panel {
+    min-width: 40px;
+  }
 }
 
 .devio-editor-panel.collapsed {
@@ -362,17 +711,52 @@ button {
   text-transform: uppercase;
   white-space: nowrap;
   flex-shrink: 0;
-  transition: background 0.12s, color 0.12s, border-color 0.12s;
+  transition: all 0.12s ease;
+}
+
+/* Responsive tabs */
+@media (max-width: 768px) {
+  .devio-tab {
+    padding: 0 8px;
+    font-size: 9px;
+    gap: 4px;
+  }
+}
+
+@media (max-width: 480px) {
+  .devio-tab {
+    padding: 0 6px;
+    font-size: 8px;
+    gap: 3px;
+  }
 }
 
 .devio-tab:hover {
   color: var(--text);
   background: var(--surface-hov);
+  transform: translateY(-1px);
 }
 
-.devio-tab.html.active  { color: var(--html-col); border-color: rgba(240,136,62,0.3);  background: rgba(240,136,62,0.08);  font-weight: 700; }
-.devio-tab.css.active   { color: var(--css-col);  border-color: rgba(121,192,255,0.3); background: rgba(121,192,255,0.08); font-weight: 700; }
-.devio-tab.js.active    { color: var(--js-col);   border-color: rgba(210,168,255,0.3); background: rgba(210,168,255,0.08); font-weight: 700; }
+.devio-tab.html.active  { 
+  color: var(--html-col); 
+  border-color: rgba(240,136,62,0.3);  
+  background: rgba(240,136,62,0.08);  
+  font-weight: 700; 
+}
+
+.devio-tab.css.active   { 
+  color: var(--css-col);  
+  border-color: rgba(121,192,255,0.3); 
+  background: rgba(121,192,255,0.08); 
+  font-weight: 700; 
+}
+
+.devio-tab.js.active    { 
+  color: var(--js-col);   
+  border-color: rgba(210,168,255,0.3); 
+  background: rgba(210,168,255,0.08); 
+  font-weight: 700; 
+}
 
 .devio-tab-dot {
   width: 6px;
@@ -387,7 +771,7 @@ button {
 
 /* Editor body fills remaining height */
 .devio-editor-body {
-  flex: 0.95;
+  flex: 1;
   overflow: hidden;
   display: flex;
   flex-direction: column;
@@ -419,6 +803,14 @@ button {
   background: var(--bg);
   flex-shrink: 0;
   gap: 8px;
+}
+
+/* Responsive output bar */
+@media (max-width: 768px) {
+  .devio-output-bar {
+    padding: 0 8px;
+    gap: 6px;
+  }
 }
 
 .devio-output-label {
@@ -460,6 +852,21 @@ button {
   text-overflow: ellipsis;
 }
 
+/* Responsive URL bar */
+@media (max-width: 768px) {
+  .devio-url-bar {
+    max-width: 180px;
+    font-size: 9px;
+  }
+}
+
+@media (max-width: 480px) {
+  .devio-url-bar {
+    max-width: 120px;
+    font-size: 8px;
+  }
+}
+
 .devio-url-bar span { color: var(--green); font-size: 9px; }
 
 /* Output iframe wrapper — must fill all remaining space */
@@ -496,7 +903,7 @@ button {
 
 /* Mobile bottom nav */
 .devio-mobile-nav {
-  transform: translatey(-20px);
+  transform: translatey(0px);
   display: flex;
   background: var(--surface);
   border-top: 1px solid var(--border);
@@ -519,7 +926,7 @@ button {
   letter-spacing: 0.12em;
   text-transform: uppercase;
   border-top: 2px solid transparent;
-  transition: color 0.12s, border-color 0.12s, background 0.12s;
+  transition: all 0.12s ease;
 }
 
 .devio-mobile-nav-btn.active {
@@ -539,6 +946,7 @@ button {
   align-items: center;
   justify-content: center;
   padding: 16px;
+  animation: fadeIn 0.2s ease-out;
 }
 
 .devio-modal {
@@ -552,6 +960,15 @@ button {
   flex-direction: column;
   overflow: hidden;
   box-shadow: 0 24px 64px rgba(0, 0, 0, 0.7);
+  animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Responsive modal */
+@media (max-width: 480px) {
+  .devio-modal {
+    max-width: 90%;
+    max-height: 80vh;
+  }
 }
 
 .devio-modal-head {
@@ -586,10 +1003,13 @@ button {
   align-items: center;
   justify-content: center;
   line-height: 1;
-  transition: background 0.12s;
+  transition: all 0.12s;
 }
 
-.devio-modal-close:hover { background: var(--surface-hov); }
+.devio-modal-close:hover { 
+  background: var(--surface-hov);
+  transform: scale(1.05);
+}
 
 .devio-saved-list {
   flex: 1;
@@ -617,10 +1037,13 @@ button {
   border: 1px solid var(--border);
   background: var(--surface);
   gap: 10px;
-  transition: border-color 0.12s;
+  transition: all 0.12s;
 }
 
-.devio-saved-item:hover { border-color: var(--border-focus); }
+.devio-saved-item:hover { 
+  border-color: var(--border-focus);
+  transform: translateX(2px);
+}
 
 .devio-saved-name {
   font-size: 11px;
@@ -643,10 +1066,13 @@ button {
   font-size: 10px;
   font-weight: 700;
   letter-spacing: 0.06em;
-  transition: filter 0.12s;
+  transition: all 0.12s;
 }
 
-.devio-load-btn:hover { filter: brightness(1.15); }
+.devio-load-btn:hover { 
+  filter: brightness(1.15);
+  transform: scale(1.05);
+}
 
 .devio-del-btn {
   padding: 3px 10px;
@@ -657,10 +1083,13 @@ button {
   font-size: 10px;
   font-weight: 600;
   letter-spacing: 0.06em;
-  transition: background 0.12s;
+  transition: all 0.12s;
 }
 
-.devio-del-btn:hover { background: rgba(255, 123, 114, 0.1); }
+.devio-del-btn:hover { 
+  background: rgba(255, 123, 114, 0.1);
+  transform: scale(1.05);
+}
 
 /* ─── Responsive breakpoints ────────────────────────────────────────────── */
 
@@ -677,7 +1106,7 @@ button {
   .devio-desktop-only { display: none !important; }
 
   /* Show mobile-only elements */
-  .devio-mobile-only  { display: flex !important; }
+  .devio-mobile-only  { display: flex !important;}
 
   .devio-header { padding: 0 8px; gap: 6px; }
   .devio-h-right { gap: 3px; }
@@ -686,5 +1115,16 @@ button {
   .devio-run-btn {
     padding: 0 8px;
     letter-spacing: 0.05em;
+  }
+}
+
+/* Small mobile devices */
+@media (max-width: 480px) {
+  .devio-header {
+    padding: 0 6px;
+  }
+  
+  .devio-h-right {
+    gap: 2px;
   }
 }

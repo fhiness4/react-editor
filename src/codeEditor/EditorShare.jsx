@@ -1,21 +1,30 @@
 import React, { useState, useEffect } from 'react';
 import CodeEditor from './components/CodeEditor';
+import Avatar from "../appPages/component/avatar.jsx"
 import Output from './components/Output';
-import Saving from './Savecode';
 import SuggestionBox from './components/SuggestionBox';
 import ThemeToggle from './components/ThemeToggle';
 import ResizeHandle from './components/ResizeHandle';
+import NavDropdown from "../appPages/component/drop-down.jsx"
 import {
   Save, History, PanelLeft, PanelRight,
-  Monitor, Tablet, Smartphone, Lightbulb, Terminal, Eye, Send,
+  Monitor, Tablet, Smartphone, Lightbulb, Terminal, Eye,
+  Download, Copy, CheckCircle, Loader
 } from 'lucide-react';
+import LoadingSpinner from "../components/LoadingSpinner";
 import './Editor.css';
 import { useAuthStore } from '../store/authStore';
-import { Link, useNavigate } from "react-router-dom";
-
 const url = import.meta.env.VITE_API_URL;
-import toast from 'react-hot-toast';
+import { useSearchParams } from 'react-router-dom';
+import JSZip from 'jszip';
 
+const NAV_PAGES = [
+  { label: "Home",       icon: "⌂",  desc: "Back to landing page" , to : "/"     },
+  { label: "Sign-up",  icon: "◈",  desc: "sign up to Devio"   , to: "/Signup" },
+    { label: "Sign-in",   icon: "◉",  desc: "Sign in to Devio", to:"/login" },
+  { label: "Editor",     icon: "⟨/⟩",desc: "Write & run code" ,  active: true  },
+  { label: "Explore",    icon: "✦",  desc: "Browse the community", to:"/explore" },
+];
 /* ─── Responsive hook ────────────────────────────────────────────────────── */
 function useIsMobile() {
   const [v, setV] = useState(() => window.innerWidth < 768);
@@ -27,8 +36,38 @@ function useIsMobile() {
   return v;
 }
 
+/* ─── Email Loading Component ────────────────────────────────────────────── */
+const EmailLoadingOverlay = ({ email }) => {
+  return (
+    <div className="email-loading-overlay">
+      <div className="email-loading-content">
+        <Loader className="email-loading-spinner" size={40} />
+        <h3>Loading your workspace</h3>
+        <p>geting, @{email} code!</p>
+        <div className="email-loading-progress">
+          <div className="email-loading-bar"></div>
+        </div>
+        <span className="email-loading-text">Setting up your coding environment...</span>
+      </div>
+    </div>
+  );
+};
+
 /* ─── App ────────────────────────────────────────────────────────────────── */
-const App = () => {
+const App = ({onNavigate}) => {
+  const [searchParams] = useSearchParams();
+  const [urldata, seturldata] = useState({
+    userId: {
+      name: "user not found",
+      profilepic: "",
+      email: ""
+    }
+  });
+  const [id, setId] = useState(searchParams.get('id'));
+  const [isEmailLoading, setIsEmailLoading] = useState(true);
+  const [copiedLink, setCopiedLink] = useState(false);
+  const [isDownloading, setIsDownloading] = useState(false);
+  
   const [html, setHtml] = useState(`<!DOCTYPE html>
 <html>
 <head>
@@ -86,47 +125,6 @@ const App = () => {
       to   { transform: translateY(0);    opacity: 1; }
     }
     
-    #app {
-      margin: 32px 0;
-      padding: 20px;
-      border: 1px solid #1A1A2E;
-      border-radius: 4px;
-      min-height: 60px;
-      background: #0D0D15;
-    }
-    
-    #app p {
-      color:  #58A6FF;
-      font-size: 14px;
-      line-height: 1.6;
-    }
-    
-    #app p::before { content: '> '; color: #444; }
-    
-    .btn-row {
-      display: flex;
-      justify-content: center;
-      margin-top: 32px;
-    }
-    
-    button {
-      background: transparent;
-      color:  #58A6FF;
-      border: 1px solid #58A6FF;
-      padding: 10px 28px;
-      border-radius: 3px;
-      cursor: pointer;
-      font-family: 'DM Mono', monospace;
-      font-size: 13px;
-      letter-spacing: 0.08em;
-      transition: background 0.2s, box-shadow 0.2s;
-    }
-    
-    button:hover {
-      background: rgba(0, 255, 178, 0.08);
-      box-shadow: 0 0 16px rgba(0, 255, 178, 0.2);
-    }
-    
     button:active { transform: scale(0.98); }
   </style>
 </head>
@@ -138,11 +136,7 @@ const App = () => {
       <span class="dot g"></span>
       <span class="terminal-label">devio — index.html</span>
     </div>
-    <h1><span class="prefix">// </span>Welcome to Devio</h1>
-    <div id="app"></div>
-    <div class="btn-row">
-      <button onclick="alert('Hello from Devio!')">run script</button>
-    </div>
+    <h1><span class="prefix">// </span> code not found</h1>
   </div>
 </body>
 </html>`);
@@ -174,52 +168,131 @@ button:hover {
 
 const [js, setJs] = useState(`// JavaScript Editor
 console.log("Welcome to the Devio code editor!");
+`);
 
-document.addEventListener('DOMContentLoaded', function() {
-  console.log('Page loaded!');
-  const app = document.getElementById('app');
-  if (app) {
-    const greeting = document.createElement('p');
-    greeting.textContent = 'Hello from JavaScript!';
-    app.appendChild(greeting);
-  }
-});`);
-
-  const [theme, setTheme]                     = useState('vs-dark');
-  const [savedCodes, setSavedCodes]           = useState([]);
-  const [output, setOutput]                   = useState('');
+  const [theme, setTheme] = useState('vs-dark');
+  const [output, setOutput] = useState('');
   const [showSuggestions, setShowSuggestions] = useState(false);
-  const [showSaved, setShowSaved]             = useState(false);
-  const [isFullscreen, setIsFullscreen]       = useState(false);
-  const [activeTab, setActiveTab]             = useState('html');
-  const [editorSize, setEditorSize]           = useState(50);
-  const [isDragging, setIsDragging]           = useState(false);
-  const [deviceMode, setDeviceMode]           = useState('ipad');
+  const [showSaved, setShowSaved] = useState(false);
+  const [isFullscreen, setIsFullscreen] = useState(false);
+  const [activeTab, setActiveTab] = useState('html');
+  const [editorSize, setEditorSize] = useState(50);
+  const [isDragging, setIsDragging] = useState(false);
+  const [deviceMode, setDeviceMode] = useState('ipad');
   const [isPanelCollapsed, setIsPanelCollapsed] = useState(false);
-  const [fullscreen, setfullscreen]           = useState({});
-  const [isdesktop, setisdesktop]             = useState(false);
-  const [isSaving, setIssaving]               = useState(false);
-  const [mobile, setIsmobile]                 = useState(false);
-  const [mobileView, setMobileView]           = useState('editor');
+  const [fullscreen, setfullscreen] = useState({});
+  const [isdesktop, setisdesktop] = useState(false);
+  const [isSaving, setIssaving] = useState(false);
+  const [mobile, setIsmobile] = useState(false);
+  const [mobileView, setMobileView] = useState('preview');
+  
+  // get data
+  async function getData() {
+    
+    try {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/code/getsingle-html?_id=${id}`, {
+        method: "GET",
+        mode: "cors",
+        headers: {
+          "content-Type": "application/json"
+        }
+      });
+      const res = await response.json();
+      if (res.success) {
+        
+        seturldata(res.existingcode)
+        setHtml(res.existingcode.html)
+        setCss(res.existingcode.css)
+        setJs(res.existingcode.js)
+        
+        // Simulate email loading for 1.5 seconds after data is loaded
+        setTimeout(() => {
+          setIsEmailLoading(false);
+        }, 1500);
+      } else {
+        
+        setTimeout(() => {
+          setIsEmailLoading(false);
+        }, 1500);
+      }
+    } catch (error) {
+      
+      setTimeout(() => {
+        setIsEmailLoading(false);
+      }, 1500);
+    }
+  }
+  
+  useEffect(() => {
+    getData()
+  }, [searchParams]); // Re-run when URL changes
+
+  // Function to download combined code as zip
+  const downloadCombinedCode = async () => {
+    setIsDownloading(true);
+    try {
+      const combinedHtml = `
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Devio Generated Code</title>
+    <style>
+        ${css}
+    </style>
+</head>
+<body>
+    ${html}
+    <script>
+        ${js}
+    </script>
+</body>
+</html>`;
+
+      const zip = new JSZip();
+      
+      // Add individual files
+      zip.file("index.html", combinedHtml);
+      zip.file("style.css", css);
+      zip.file("script.js", js);
+      
+      // Generate the zip file
+      const content = await zip.generateAsync({ type: "blob" });
+      
+      // Create download link
+      const link = document.createElement('a');
+      const url = URL.createObjectURL(content);
+      link.href = url;
+      link.download = `devio-code-${Date.now()}.zip`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+      
+      
+    } catch (error) {
+      console.error("Error downloading code:", error);
+      
+    } finally {
+      setIsDownloading(false);
+    }
+  };
+
+  // Function to copy current page link
+  const copyPageLink = () => {
+    const currentUrl = window.location.href;
+    navigator.clipboard.writeText(currentUrl).then(() => {
+      setCopiedLink(true);
+      
+      setTimeout(() => setCopiedLink(false), 3000);
+    }).catch(() => {
+      
+      
+    });
+  };
 
   const isMobile = useIsMobile();
-  const navigate = useNavigate();
-
-  const { user, data, logout, getuser, uploadimg, addcodes, codefiles } = useAuthStore();
-
-  function closesaving() { setIssaving(!isSaving); }
-
-  async function gethtml() {
-    setShowSaved(!showSaved);
-    const response = await fetch(
-      `${url}/api/code/getuser-html?codeid=${user._id}`,
-      { method: 'GET', mode: 'cors', headers: { 'content-Type': 'application/json' } }
-    );
-    const res = await response.json();
-    setSavedCodes(res.data);
-    const saved = localStorage.getItem('savedCodes');
-  }
-
   useEffect(() => { runCode(); }, [html, css, js]);
 
   const runCode = () => {
@@ -239,35 +312,10 @@ document.addEventListener('DOMContentLoaded', function() {
     setOutput(combinedCode);
   };
 
-  const saveCode = () => { setIssaving(true); };
-
-  const loadCode = (savedItem) => {
-    setHtml(savedItem.html);
-    setCss(savedItem.css);
-    setJs(savedItem.js);
-    setShowSaved(false);
-  };
-
-  const deleteCode = async (codeid, userid) => {
-    try {
-      setShowSaved(!showSaved);
-      toast.success('deleting code....');
-      const response = await fetch(
-        `${url}/api/code/delete-html?userId=${userid}&_id=${codeid}`,
-        { method: 'DELETE', headers: { 'Content-Type': 'application/json' } }
-      );
-      const data = await response.json();
-      if (data.success) { toast.success(data.message); } else { toast.error(data.message); }
-    } catch (error) {
-      console.error('Error:', error);
-      throw error;
-    }
-  };
-
   const applySuggestion = (language, suggestion) => {
-    if      (language === 'html') setHtml(html + suggestion);
-    else if (language === 'css')  setCss(css + suggestion);
-    else if (language === 'js')   setJs(js + suggestion);
+    if (language === 'html') setHtml(html + suggestion);
+    else if (language === 'css') setCss(css + suggestion);
+    else if (language === 'js') setJs(js + suggestion);
     setShowSuggestions(false);
   };
 
@@ -287,21 +335,14 @@ document.addEventListener('DOMContentLoaded', function() {
 
   const togglePanel = () => {
     setIsPanelCollapsed(!isPanelCollapsed);
-    const editpanel = document.getElementById('editor-panel');
-    if (!isPanelCollapsed) {
-      if (window.innerWidth <= 546) editpanel.style.height = '1500%';
-    } else {
-      editpanel.style.height = '100%';
-      if (window.innerWidth <= 546) editpanel.style.height = '40%';
-    }
   };
 
   const setDevicePreset = (mode) => {
     setDeviceMode(mode);
     switch (mode) {
       case 'mobile': setEditorSize(30); setIsPanelCollapsed(false); break;
-      case 'ipad':   setEditorSize(50);   setIsPanelCollapsed(false); break;
-      case 'laptop': setEditorSize(80);   setIsPanelCollapsed(false); break;
+      case 'ipad': setEditorSize(50); setIsPanelCollapsed(false); break;
+      case 'laptop': setEditorSize(80); setIsPanelCollapsed(false); break;
       default: break;
     }
   };
@@ -333,79 +374,90 @@ document.addEventListener('DOMContentLoaded', function() {
     ],
   };
 
-
+  // Show email loading overlay while fetching data
+  if (isEmailLoading) {
+    return <EmailLoadingOverlay email={urldata.userId.email || "Guest"} />;
+  }
 
   /* ── Render ── */
   return (
     <div
       Style={{
-       "overflow": "hidden"
-       }}
-    className={`devio-app app ${isFullscreen ? 'fullscreen' : ''} ${theme === 'vs-dark' ? 'dark-theme' : 'light-theme'}`}>
+        "overflow": "hidden"
+      }}
+      className={`devio-app app ${isFullscreen ? 'fullscreen' : ''} ${theme === 'vs-dark' ? 'dark-theme' : 'light-theme'}`}>
 
       {/* ══════════ HEADER ══════════ */}
       <header className="devio-header1">
-      {/* Left */}
-        
-
-          <div className="devio-logo">
+        <div className="devio-logo">
           <div className="devio-traffic-lights">
-            <span className="devio-tl devio-tl--red" />
-            <span className="devio-tl devio-tl--yellow" />
-            <span className="devio-tl devio-tl--green" />
+            <Avatar name={urldata.userId.name} src={urldata.userId.profilepic} size={35} />
           </div>
 
           <div className="devio-h-divider" />
-            <div className="devio-logo-icon">
-              <Terminal size={12} />
-            </div>
-            <span className="devio-logo-text">devio</span>
-            <span className="devio-cursor" />
-
-          {/* User badge — visible on all screen sizes */}
-          <div className="devio-h-divider" />
-          <span className="devio-user-badge">@{user.name}</span>
+          <div className="devio-logo-icon">
+            <Terminal size={12} />
           </div>
+          <span className="devio-logo-text">devio</span>
+          <span className="devio-cursor" />
+
+          {/* User badge — visible on all screen sizes and user name*/}
+          <div className="devio-h-divider" />
+          <span className="devio-user-badge">@{urldata.userId.name}</span>
+        </div>
+
+        <div className="devio-device-group devio-desktop-only">
+          <button className={`devio-device-btn${deviceMode === 'laptop' ? ' active' : ''}`} onClick={() => setDevicePreset('laptop')} title="Laptop"><Monitor size={12} /></button>
+          <button className={`devio-device-btn${deviceMode === 'ipad' ? ' active' : ''}`} onClick={() => setDevicePreset('ipad')} title="iPad">  <Tablet size={12} /></button>
+          <button 
           
-          <div className="devio-device-group devio-desktop-only">
-            <button className={`devio-device-btn${deviceMode === 'laptop' ? ' active' : ''}`} onClick={() => setDevicePreset('laptop')} title="Laptop"><Monitor size={12} /></button>
-            <button className={`devio-device-btn${deviceMode === 'ipad'   ? ' active' : ''}`} onClick={() => setDevicePreset('ipad')}   title="iPad">  <Tablet size={12} /></button>
-            <button className={`devio-device-btn${deviceMode === 'mobile' ? ' active' : ''}`} onClick={() => setDevicePreset('mobile')} title="Mobile"><Smartphone size={12} /></button>
-          </div>
+          className={`devio-device-btn${deviceMode === 'mobile' ? ' active' : ''}`} onClick={() => setDevicePreset('mobile')} title="Mobile"><Smartphone size={12} /></button>
+         <NavDropdown onNavigate={onNavigate} NAV_PAGES={NAV_PAGES} />
+        </div>
 
-          {/* Mobile only */}
-          {
-            isMobile && 
-            <div className="devio-device-group devio-mobile-only">
-            <button className={`devio-device-btn${isFullscreen ? ' active' : ''}`} onClick={toggleFullscreen}  title="Fullscreen">  <Monitor size={12} /></button>
-            <button className={`devio-device-btn${isdesktop    ? ' active' : ''}`} onClick={() => setdesktop()} title="Desktop sim"><Tablet size={12} /></button>
+        {/* Mobile only */}
+        {
+          isMobile &&
+          <div className="devio-device-group devio-mobile-only">
+            <button 
+            className={`devio-device-btn${isFullscreen ? ' active' : ''}`} onClick={toggleFullscreen} title="Fullscreen">  <Monitor size={12} /></button>
+            <button className={`devio-device-btn${isdesktop ? ' active' : ''}`} onClick={() => setdesktop()} title="Desktop sim"><Tablet size={12} /></button>
+               <NavDropdown onNavigate={onNavigate} NAV_PAGES={NAV_PAGES} />
           </div>
-          }
+        }
       </header>
 
       <header className="devio-header">
         <div className="devio-h-right">
+          {/* Copy Link Button */}
+          <button 
+            className="devio-icon-btn" 
+            onClick={copyPageLink} 
+            title="Copy link to this page"
+          >
+            {copiedLink ? <CheckCircle size={14} /> : <Copy size={14} />}
+          </button><span style={{fontSize: "5px"}}>copy  share link</span>
+
+          {/* Download Button */}
+          <button 
+            className="devio-icon-btn" 
+            onClick={downloadCombinedCode} 
+            title="Download code as ZIP"
+            disabled={isDownloading}
+          >
+            {isDownloading ? <Loader size={14} className="spinning" /> : <Download size={14} />}
+            
+          </button><span style={{fontSize: "5px"}}>download</span>
+
           <ThemeToggle theme={theme} setTheme={setTheme} />
 
           <button className="devio-icon-btn devio-desktop-only" onClick={togglePanel} title="Toggle panel">
             {isPanelCollapsed ? <PanelRight size={14} /> : <PanelLeft size={14} />}
           </button>
-         <button className="devio-icon-btn" onClick={() => setShowSuggestions(!showSuggestions)} title="Snippets">
+
+          <button className="devio-icon-btn" onClick={() => setShowSuggestions(!showSuggestions)} title="Snippets">
             <Lightbulb size={14} />
           </button>
-
-          <button className="devio-save-btn" onClick={() => gethtml()} title="Post a file">
-          {/*<History size={14} />*/}
-            {/*<Send size={14} />*/} Post / Load
-          </button>
-
-
-          <button className="devio-save-btn" onClick={saveCode}>
-            <Save size={11} /> Save
-          </button>
-
-
-
         </div>
       </header>
       {/* ══════════ MAIN ══════════ */}
@@ -415,38 +467,34 @@ document.addEventListener('DOMContentLoaded', function() {
         {!isMobile && (
           <div className="devio-split">
             <div className={`devio-editor-panel${isPanelCollapsed ? ' collapsed' : ''}`}>
-            
-            
-            
-            
-         <div className="devio-tab-bar">
-      {[
-        { id: 'html', label: 'HTML' },
-        { id: 'css',  label: 'CSS'  },
-        { id: 'js',   label: 'JS'   },
-      ].map(({ id, label }) => (
-        <button
-          key={id}
-          className={`devio-tab ${id}${activeTab === id ? ' active' : ''}`}
-          onClick={() => setActiveTab(id)}
-        >
-          <span className={`devio-tab-dot ${id}`} />
-          {label}
-        </button>
-      ))}
-    </div>
+              <div className="devio-tab-bar">
+                {[
+                  { id: 'html', label: 'HTML' },
+                  { id: 'css', label: 'CSS' },
+                  { id: 'js', label: 'JS' },
+                ].map(({ id, label }) => (
+                  <button
+                    key={id}
+                    className={`devio-tab ${id}${activeTab === id ? ' active' : ''}`}
+                    onClick={() => setActiveTab(id)}
+                  >
+                    <span className={`devio-tab-dot ${id}`} />
+                    {label}
+                  </button>
+                ))}
+              </div>
               <div className="devio-editor-body">
-                {activeTab === 'html' && <CodeEditor language="html"       value={html} onChange={setHtml} theme={theme} />}
-                {activeTab === 'css'  && <CodeEditor language="css"        value={css}  onChange={setCss}  theme={theme} />}
-                {activeTab === 'js'   && <CodeEditor language="javascript" value={js}   onChange={setJs}   theme={theme} />}
+                {activeTab === 'html' && <CodeEditor language="html" value={html} onChange={setHtml} theme={theme} />}
+                {activeTab === 'css' && <CodeEditor language="css" value={css} onChange={setCss} theme={theme} />}
+                {activeTab === 'js' && <CodeEditor language="javascript" value={js} onChange={setJs} theme={theme} />}
               </div>
             </div>
 
-            <div className={`devio-output-panel${isPanelCollapsed ? ' expanded' : ''}`} id="editor-panel" 
-            style={{ 
-            '--editor-size': `${editorSize}%`,
-            '--panel-size': `${100 - editorSize}%`
-          }}>
+            <div className={`devio-output-panel${isPanelCollapsed ? ' expanded' : ''}`} id="editor-panel"
+              style={{
+                '--editor-size': `${editorSize}%`,
+                '--panel-size': `${100 - editorSize}%`
+              }}>
               <div className="devio-output-bar">
                 <span className="devio-output-label">
                   <span className="devio-live-dot" /> Preview
@@ -463,36 +511,31 @@ document.addEventListener('DOMContentLoaded', function() {
         {/* Mobile: both panes always in DOM, toggled via .hidden class */}
         {isMobile && (
           <div className="devio-mobile-container">
-
-
             {/* Editor pane */}
             <div
               className={`devio-mobile-pane${mobileView !== 'editor' ? ' hidden' : ''}`}
               style={{ background: 'var(--surface)' }}
             >
-                 <div className="devio-tab-bar">
-      {[
-        { id: 'html', label: 'HTML' },
-        { id: 'css',  label: 'CSS'  },
-        { id: 'js',   label: 'JS'   },
-      ].map(({ id, label }) => (
-        <button
-          key={id}
-          className={`devio-tab ${id}${activeTab === id ? ' active' : ''}`}
-          onClick={() => setActiveTab(id)}
-        >
-          <span className={`devio-tab-dot ${id}`} />
-          {label}
-        </button>
-      ))}
-    </div>
-    
-    
-    
+              <div className="devio-tab-bar">
+                {[
+                  { id: 'html', label: 'HTML' },
+                  { id: 'css', label: 'CSS' },
+                  { id: 'js', label: 'JS' },
+                ].map(({ id, label }) => (
+                  <button
+                    key={id}
+                    className={`devio-tab ${id}${activeTab === id ? ' active' : ''}`}
+                    onClick={() => setActiveTab(id)}
+                  >
+                    <span className={`devio-tab-dot ${id}`} />
+                    {label}
+                  </button>
+                ))}
+              </div>
               <div className="devio-editor-body">
-                {activeTab === 'html' && <CodeEditor language="html"       value={html} onChange={setHtml} theme={theme} />}
-                {activeTab === 'css'  && <CodeEditor language="css"        value={css}  onChange={setCss}  theme={theme} />}
-                {activeTab === 'js'   && <CodeEditor language="javascript" value={js}   onChange={setJs}   theme={theme} />}
+                {activeTab === 'html' && <CodeEditor language="html" value={html} onChange={setHtml} theme={theme} />}
+                {activeTab === 'css' && <CodeEditor language="css" value={css} onChange={setCss} theme={theme} />}
+                {activeTab === 'js' && <CodeEditor language="javascript" value={js} onChange={setJs} theme={theme} />}
               </div>
             </div>
 
@@ -518,7 +561,7 @@ document.addEventListener('DOMContentLoaded', function() {
       {isMobile && (
         <nav className="devio-mobile-nav">
           <button
-            className={`devio-mobile-nav-btn${mobileView === 'editor'  ? ' active' : ''}`}
+            className={`devio-mobile-nav-btn${mobileView === 'editor' ? ' active' : ''}`}
             onClick={() => setMobileView('editor')}
           >
             <Terminal size={16} />
@@ -541,43 +584,6 @@ document.addEventListener('DOMContentLoaded', function() {
           onApplySuggestion={applySuggestion}
           onClose={() => setShowSuggestions(false)}
         />
-      )}
-
-      {isSaving && (
-        <Saving html={html} userId={user._id} css={css} js={js} onclose={closesaving} />
-      )}
-
-      {showSaved && (
-        <div className="devio-overlay" onClick={() => setShowSaved(false)}>
-          <div className="devio-modal" onClick={(e) => e.stopPropagation()}>
-            <div className="devio-modal-head">
-              <div className="devio-modal-title">
-                <Terminal size={12} /> saved files
-              </div>
-              <button className="devio-modal-close" onClick={() => setShowSaved(false)}>×</button>
-            </div>
-            <div className="devio-saved-list">
-              {savedCodes.length === 0 ? (
-                <p className="devio-no-saved">~ no saved files found</p>
-              ) : (
-                savedCodes.map((code, i) => (
-                  <div key={i} className="devio-saved-item">
-                    <span className="devio-saved-name">
-                      <span>›</span>{code.name}
-                    </span>
-                    <div className="devio-saved-actions">
-                      <button className="devio-load-btn" onClick={() => loadCode(code)}>load</button>
-                      <Link 
-                      to={`/post?id=${code._id}&userId=${user._id}&name=${user.name}&pic=${user.profilepic}`}
-                      className="devio-load-btn" onClick={() => { setShowSaved(false) }}>post</Link>
-                      <button className="devio-del-btn"  onClick={() => deleteCode(code._id, user._id)}>rm</button>
-                    </div>
-                  </div>
-                ))
-              )}
-            </div>
-          </div>
-        </div>
       )}
     </div>
   );
