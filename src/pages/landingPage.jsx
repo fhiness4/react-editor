@@ -362,7 +362,9 @@ export default function DevioLanding({ onEnterDashboard }) {
             {NAV_LINKS.map(l => (
               <a key={l} href={`#${l.toLowerCase()}`} className="nav-ul text-xs tracking-widest text-gray-400 hover:text-blue-400 transition-colors uppercase pb-0.5">{l}</a>
             ))}
-            <button onClick={onEnterDashboard} className="nav-ul text-xs tracking-widest text-blue-400 hover:text-blue-300 transition-colors uppercase font-bold pb-0.5">Dashboard</button>
+            <Link
+            to='/explore'
+            onClick={onEnterDashboard} className="nav-ul text-xs tracking-widest text-blue-400 hover:text-blue-300 transition-colors uppercase font-bold pb-0.5">Explore Posts</Link>
           </div>
           <div className="hidden md:flex items-center gap-3">
             <Link
@@ -383,7 +385,7 @@ export default function DevioLanding({ onEnterDashboard }) {
             {NAV_LINKS.map(l => (
               <a key={l} href={`#${l.toLowerCase()}`} onClick={() => setMobileOpen(false)} className="block text-xs tracking-widest text-gray-400 hover:text-blue-400 uppercase py-2 border-b border-gray-800/40">{l}</a>
             ))}
-            <Link to="/login" onClick={() => { setMobileOpen(false); onEnterDashboard(); }} className="block w-full text-left text-center text-xs tracking-widest text-blue-400 uppercase font-bold py-2 border-b border-gray-800/40">Dashboard</Link>
+            <Link to='/explore' onClick={() => { setMobileOpen(false); onEnterDashboard(); }} className="block w-full text-left text-center text-xs tracking-widest text-blue-400 uppercase font-bold py-2 border-b border-gray-800/40">Explore Posts</Link>
             <div className="pt-3 flex flex-col gap-2">
               <Link
                  to='/login' className="w-full text-center text-xs text-gray-400 border border-gray-700 rounded py-2">Log in</Link>
