@@ -60,7 +60,7 @@ body{background:var(--bg);color:var(--t1);font-family:var(--sans);overflow-x:hid
 .nbs:hover{background:#ddd;box-shadow:0 0 18px rgba(255,255,255,.12)}
 .burger{display:none;background:none;border:1px solid var(--border2);color:var(--t3);width:36px;height:36px;border-radius:6px;cursor:pointer;font-size:17px;align-items:center;justify-content:center;transition:all .2s}
 .burger:hover{border-color:var(--border3);color:var(--t1)}
-.mob{display:none;position:fixed;top:58px;left:0;right:0;z-index:399;background:rgba(8,8,8,.99);backdrop-filter:blur(18px);border-bottom:1px solid var(--border);padding:16px 24px;flex-direction:column}
+.mob{position:fixed;top:58px;left:0;right:0;z-index:399;background:rgba(8,8,8,.99);backdrop-filter:blur(18px);border-bottom:1px solid var(--border);padding:16px 24px;flex-direction:column}
 .mob.op{display:flex}
 .mob a{font-family:var(--mono);font-size:12px;color:var(--t3);text-decoration:none;padding:13px 0;border-bottom:1px solid rgba(255,255,255,.05);letter-spacing:.12em;transition:color .2s}
 .mob a:hover{color:var(--t1)}
@@ -71,7 +71,7 @@ body{background:var(--bg);color:var(--t1);font-family:var(--sans);overflow-x:hid
 .cover{
   position:relative;height:300px;overflow:hidden;
   background:linear-gradient(175deg,#0e0e0e 0%,#080808 100%);
-  margin-top:58px;
+  margin-top:0px;
 }
 
 /* subtle noise texture */
@@ -103,7 +103,7 @@ body{background:var(--bg);color:var(--t1);font-family:var(--sans);overflow-x:hid
 .cover-devio{
   position:absolute;inset:0;
   display:flex;align-items:center;justify-content:center;
-  pointer-events:none;z-index:1;
+  pointer-events:none;
   overflow:hidden;
 }
 .cover-devio-text{
@@ -113,7 +113,7 @@ body{background:var(--bg);color:var(--t1);font-family:var(--sans);overflow-x:hid
   letter-spacing:.12em;
   color:transparent;
   /* etched outline */
-  -webkit-text-stroke:1px rgba(255,255,255,.07);
+  -webkit-text-stroke:1px rgba(255,255,255,.37);
   text-stroke:1px rgba(255,255,255,.07);
   /* scan-in animation */
   animation:devioScan 1.8s cubic-bezier(.16,1,.3,1) .3s both;
