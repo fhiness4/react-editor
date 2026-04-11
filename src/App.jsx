@@ -5,7 +5,9 @@ import SignUpPage from "./pages/SignUpPage";
 import LoginPage from "./pages/LoginPage";
 import EmailVerificationPage from "./pages/EmailVerificationPage";
 import DevioExplore from "./appPages/GuestExplore.jsx"
+import DevioSettings from "./appPages/settingPage.jsx"
 import DevioExplorer from "./appPages/Explore.jsx"
+import ProfilePage from "./appPages/profilePage.jsx"
 import Codeapp from "./codeEditor/Editor";
 import DevioPost from "./appPages/postPage.jsx"
 import CodeShare from "./codeEditor/EditorShare.jsx";
@@ -58,18 +60,26 @@ function App() {
 		<main style={{
 		  backgroundSize: "cover"
 		}}
-			className='min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 relative overflow-hidden'
+			className='min-h-screen relative overflow-hidden'
 		 >
 			<FloatingShape color='bg-white-500' size='w-64 h-64' top='-5%' left='10%' delay={0} />
 			<FloatingShape color='bg-white-500' size='w-48 h-48' top='70%' left='80%' delay={5} />
 			<FloatingShape color='bg-white-500' size='w-32 h-32' top='40%' left='-10%' delay={2} />
 
 			<Routes>
-				<Route
+			<Route
 					path='/dashboard'
 					element={
 						<ProtectedRoute>
 							<DevioDashboard />
+						</ProtectedRoute>
+					}
+				/>
+						<Route
+					path='/setting'
+					element={
+						<ProtectedRoute>
+							<DevioSettings />
 						</ProtectedRoute>
 					}
 				/>
@@ -95,6 +105,14 @@ function App() {
 						<ProtectedRoute>
 							<DevioPost />
 						</ProtectedRoute>
+					}
+				/>
+					 <Route
+					path='/profile'
+					element={
+						<RedirectAuthenticatedUser>
+							<ProfilePage />
+						</RedirectAuthenticatedUser>
 					}
 				/>
 	        <Route
