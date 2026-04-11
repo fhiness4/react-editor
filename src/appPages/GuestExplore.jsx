@@ -291,6 +291,7 @@ export default function DevioExplorer({ onNavigate }) {
       if (res.success) {
         setProjects(res.data);
       } else {
+      
         setProjects([]);
       }
     } catch (error) {

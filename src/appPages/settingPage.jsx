@@ -1,18 +1,13 @@
 import { useState, useRef } from "react";
+import Avatar from "./component/avatar.jsx"
 import "./styles/settingPage.css"
+import Card from "./component/Card.jsx"
+import { Link, useNavigate , useSearchParams } from 'react-router-dom';
+import { useAuthStore } from "../store/authStore";
+import toast from 'react-hot-toast';
+const url = `${import.meta.env.VITE_API_URL}`
 // ─── data ──────────────────────────────────────────────────────────────────────
-const INITIAL = {
-  name:     "Kaito Nakamura",
-  username: "0xkaito",
-  email:    "kaito@devio.dev",
-  bio:      "Frontend dev. I build things in CSS and JS. Occasional open-source contributor. Tokyo 🗼",
-  website:  "https://0xkaito.dev",
-  twitter:  "@0xkaito",
-  github:   "0xkaito",
-  location: "Tokyo, Japan",
-  plan:     "Pro",
-  joinDate: "January 12, 2025",
-};
+
 
 // Skill suggestions grouped by category
 const SKILL_GROUPS = [
@@ -43,34 +38,12 @@ const SKILL_MAP  = Object.fromEntries(ALL_SKILLS.map(s => [s.name, s]));
 
 const DEFAULT_SKILLS = ["JavaScript", "CSS", "React", "Node.js", "Git", "TypeScript"];
 
-// ─── small helpers ─────────────────────────────────────────────────────────────
-function Avatar({ name, src, size = 72, color = "#1d4ed8" }) {
-  const initials = name.split(" ").map(n => n[0]).join("").slice(0, 2).toUpperCase();
-  return (
-    <div style={{
-      width: size, height: size, borderRadius: "50%",
-      overflow: "hidden", flexShrink: 0,
-      border: "2px solid rgba(59,130,246,0.4)",
-      boxShadow: "0 0 20px rgba(59,130,246,0.22)",
-    }}>
-      {src
-        ? <img src={src} alt={name} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
-        : <div style={{
-            width: "100%", height: "100%",
-            background: `linear-gradient(135deg, ${color}, #0a1425)`,
-            display: "flex", alignItems: "center", justifyContent: "center",
-            fontSize: size * 0.33, fontWeight: 900, color: "#fff", userSelect: "none",
-          }}>{initials}</div>
-      }
-    </div>
-  );
-}
 
 function FieldLabel({ text, required }) {
   return (
     <label style={{
       display: "block", fontSize: 11, fontWeight: 700,
-      color: "#64748b", letterSpacing: "0.07em", textTransform: "uppercase", marginBottom: 6,
+      color: "#fff", letterSpacing: "0.07em", textTransform: "uppercase", marginBottom: 6,
     }}>
       {text}
       {required && <span style={{ color: "#3b82f6", marginLeft: 3 }}>*</span>}
@@ -78,16 +51,6 @@ function FieldLabel({ text, required }) {
   );
 }
 
-function Card({ children, style = {} }) {
-  return (
-    <div style={{
-      background: "rgba(9,15,28,0.88)",
-      border: "1px solid rgba(59,130,246,0.13)",
-      borderRadius: 16, padding: "22px",
-      ...style,
-    }}>{children}</div>
-  );
-}
 
 function SectionHead({ icon, label }) {
   return (
@@ -105,7 +68,7 @@ function SectionHead({ icon, label }) {
 // ─── skill tag (removable) ────────────────────────────────────────────────────
 function SkillTag({ name, onRemove }) {
   const meta = SKILL_MAP[name];
-  const color = meta?.color || "#3b82f6";
+  const color = meta?.color || "#94a3b8";
   return (
     <span style={{
       display: "inline-flex", alignItems: "center", gap: 6,
@@ -143,7 +106,7 @@ function SkillPill({ name, onClick }) {
         padding: "4px 11px", borderRadius: 99,
         background: "rgba(14,22,44,0.9)",
         border: `1px solid rgba(59,130,246,0.1)`,
-        color: "#475569", fontSize: 11,
+        color: "#94a3b8", fontSize: 11,
         fontFamily: "inherit", cursor: "pointer",
         transition: "all 0.15s",
       }}
@@ -163,30 +126,101 @@ function SkillPill({ name, onClick }) {
 
 // ─── main ────────────────────────────────────────────────────────────────────
 export default function DevioSettings({ onBack }) {
-  const [data,      setData]      = useState(INITIAL);
-  const [avatarSrc, setAvatarSrc] = useState(null);
+  const { addcodes, user, data,  logout, getuser, uploadimg, codefiles } = useAuthStore();
+  
+  const [avatarSrc, setAvatarSrc] = useState(user.profilepic);
   const [activeTab, setActiveTab] = useState("profile");
   const [skills,    setSkills]    = useState(DEFAULT_SKILLS);
+  const [bio,    setBio]    = useState("");
+    const [website,    setWebsite]    = useState("");
+      const [github,    setGithub]    = useState("");
+        const [location,    setLocation]    = useState("");
   const [skillInput,setSkillInput]= useState("");
   const [skillSearch,setSkillSearch] = useState("");
   const [savedToast,setSavedToast]= useState(false);
   const [pwForm,    setPwForm]    = useState({ current: "", next: "", confirm: "" });
   const [pwError,   setPwError]   = useState("");
   const [pwSuccess, setPwSuccess] = useState(false);
-  const [emailVal,  setEmailVal]  = useState(INITIAL.email);
+  const [emailVal,  setEmailVal]  = useState("");
   const fileRef = useRef(null);
 
-  const set = key => val => setData(d => ({ ...d, [key]: val }));
+  
 
-  const handleAvatar = e => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    const r = new FileReader();
-    r.onload = ev => setAvatarSrc(ev.target.result);
-    r.readAsDataURL(file);
+  const handleAvatar = async(e) => {
+    const file = e.target.files[0];
+    toast.success("uploading image....")
+	   if(!file){
+		   toast.error("Please select a file");
+		   return;
+	   }
+	   const dat = new FormData();	
+	   dat.append("file", file);
+	   dat.append("upload_preset","finesse");
+	   dat.append("cloud_name","db4x6r4zm");
+	   const res = await fetch("https://api.cloudinary.com/v1_1/db4x6r4zm/image/upload", {
+		   method: "POST",
+		   body: dat
+	   })
+	    const uploaaded = await res.json();
+		if (uploaaded.url) {
+			console.log(uploaaded, uploaaded.url);
+
+			// update user profile picture
+			const respons = await fetch(`${url}/api/auth/upload-img`, {
+            method: "POST",
+            mode: "cors",
+            headers:{
+                "content-Type": "application/json",
+                "authorization": `Bearer ${data.token}`,
+                "client": "not-browser"
+            }, 
+			body:JSON.stringify({
+                email: data.user.email,
+                url: uploaaded.url
+            })
+          });
+          const res = await respons.json();
+	
+		  if(res.success === true){
+			  setAvatarSrc(uploaaded.url);
+			  toast.success("Profile picture uploaded successfully");
+		  }else{
+			toast.error("profile picture upload failed");
+		  }
+		}else{
+		   toast.error("Error uploading profile picture");
+		}
   };
 
-  const save = () => {
+  const save = async() => {
+    toast.success("updating post......")
+    try {
+      const response = await fetch(`${url}/api/profile/update`, {
+            method: "POST",
+            mode: "cors",
+            headers:{
+                "content-Type": "application/json"
+            },
+            body:JSON.stringify({
+                bio: bio,
+                website: website,
+                github: github,
+                location: location ,
+                userId: user._id,
+                skills: skills
+            })
+          });
+          const res = await response.json();
+        if (res.success) {
+            toast.success("settings updated")
+        }else{
+          toast.success("error occured")
+        }
+            
+    } catch (e) {
+      console.log(e)
+      
+    }
     setSavedToast(true);
     setTimeout(() => setSavedToast(false), 2500);
   };
@@ -203,14 +237,37 @@ export default function DevioSettings({ onBack }) {
 
   const removeSkill = name => setSkills(s => s.filter(x => x !== name));
 
-  const changePassword = () => {
+  const changePassword = async() => {
     if (!pwForm.current) { setPwError("Enter your current password"); return; }
     if (pwForm.next.length < 8) { setPwError("New password must be at least 8 characters"); return; }
     if (pwForm.next !== pwForm.confirm) { setPwError("Passwords don't match"); return; }
-    setPwError("");
-    setPwSuccess(true);
-    setPwForm({ current: "", next: "", confirm: "" });
-    setTimeout(() => setPwSuccess(false), 3000);
+    
+    toast.success("Password uploading....")
+    // changePassword Backend
+    const respons = await fetch(`${url}/api/auth/changepassword`, {
+            method: "PATCH",
+            mode: "cors",
+            headers:{
+                "content-Type": "application/json",
+                "authorization": `Bearer ${data.token}`,
+                "client": "not-browser"
+            }, 
+			body:JSON.stringify({
+                 oldPassword: pwForm.current,
+                 newPassword: pwForm.next
+            })
+          });
+          const res = await respons.json();
+          if (res.success) {
+            setPwError("");
+            setPwSuccess(true);
+             setPwForm({ current: "", next: "", confirm: "" });
+            setTimeout(() => setPwSuccess(false), 3000);
+          }else{
+            setPwError("password must contain atleast 8 characters, Capital text, number and special characters or wrong current password");
+          }
+    
+    
   };
 
   // filtered suggestions
@@ -238,7 +295,7 @@ export default function DevioSettings({ onBack }) {
     <div style={{
       minHeight: "100vh",
       background: "#04080f",
-      color: "#e2e8f0",
+      color: "#94a3b8",
       fontFamily: "'JetBrains Mono','Fira Code',monospace",
     }}>
 
@@ -273,10 +330,10 @@ export default function DevioSettings({ onBack }) {
             display: "flex", alignItems: "center", justifyContent: "center",
             fontSize: 10, fontWeight: 900, color: "#fff",
             boxShadow: "0 0 10px rgba(29,78,216,0.55)",
-          }}>D/</div>
+          }}>D/V</div>
           <span style={{ fontWeight: 800, fontSize: 13, color: "#60a5fa", letterSpacing: "0.1em" }}>DEVIO</span>
-          <span style={{ color: "#1e3a6e", fontSize: 14 }}>/</span>
-          <span style={{ fontSize: 11, color: "#334155" }}>settings</span>
+          <span style={{ color: "#94a3b8", fontSize: 14 }}>/</span>
+          <span style={{ fontSize: 11, color: "#94a3b8" }}>settings</span>
         </div>
 
         {savedToast && <div className="saved-toast">✓ Changes saved!</div>}
@@ -293,7 +350,7 @@ export default function DevioSettings({ onBack }) {
 
         {/* sidebar */}
         <aside className="settings-nav">
-          <p style={{ fontSize: 10, fontWeight: 700, color: "#334155", letterSpacing: "0.1em", textTransform: "uppercase", marginBottom: 10, paddingLeft: 4 }}>
+          <p style={{ fontSize: 10, fontWeight: 700, color: "#94a3b8", letterSpacing: "0.1em", textTransform: "uppercase", marginBottom: 10, paddingLeft: 4 }}>
             Settings
           </p>
           <div className="tab-nav">
@@ -325,18 +382,18 @@ export default function DevioSettings({ onBack }) {
 
                 {/* Avatar row */}
                 <div style={{ display: "flex", alignItems: "flex-start", gap: 18, marginBottom: 24, flexWrap: "wrap" }}>
-                  <Avatar name={data.name} src={avatarSrc} size={72} />
+                  <Avatar name={user.name} src={avatarSrc} size={172} />
                   <div style={{ flex: 1, minWidth: 200 }}>
                     <p style={{ fontSize: 13, fontWeight: 600, color: "#cbd5e1", marginBottom: 5 }}>Profile photo</p>
-                    <p style={{ fontSize: 11, color: "#475569", marginBottom: 12, lineHeight: 1.6 }}>
-                      JPG or PNG. Shown on your posts, comments, and profile page.
+                    <p style={{ fontSize: 11, color: "#94a3b8", marginBottom: 12, lineHeight: 1.6 }}>
+                      JPG or PNG. Shown on your posts, comments, and profile page .
                     </p>
                     <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
                       <button className="btn-ghost" style={{ fontSize: 12, padding: "7px 14px" }} onClick={() => fileRef.current?.click()}>
                         Upload photo
                       </button>
                     </div>
-                    <input ref={fileRef} type="file" accept="image/*" style={{ display: "none" }} onChange={handleAvatar} />
+                    <input ref={fileRef} type="file" accept="image/*" style={{ display: "none" }} onChange={(e) => handleAvatar(e)} />
                   </div>
                 </div>
 
@@ -345,13 +402,12 @@ export default function DevioSettings({ onBack }) {
                   <FieldLabel text="Bio" />
                   <textarea
                     className="field-input"
-                    value={data.bio}
-                    onChange={e => set("bio")(e.target.value.slice(0, 200))}
+                    onChange={e => setBio(e.target.value.slice(0, 200))}
                     rows={3}
                     style={{ ...inputStyle, resize: "none" }}
                     placeholder="A short bio about yourself…"
                   />
-                  <p style={{ fontSize: 10, color: "#1e3a6e", textAlign: "right", marginTop: 4 }}>{data.bio.length}/200</p>
+                  <p style={{ fontSize: 10, color: "#1e3a6e", textAlign: "right", marginTop: 4 }}>{bio.length}/200</p>
                 </div>
 
                 {/* Website + location */}
@@ -360,8 +416,8 @@ export default function DevioSettings({ onBack }) {
                     <FieldLabel text="Website" />
                     <input
                       className="field-input"
-                      value={data.website}
-                      onChange={e => set("website")(e.target.value)}
+                      
+                      onChange={e => setWebsite(e.target.value)}
                       style={inputStyle}
                       placeholder="https://yoursite.com"
                     />
@@ -370,8 +426,7 @@ export default function DevioSettings({ onBack }) {
                     <FieldLabel text="Location" />
                     <input
                       className="field-input"
-                      value={data.location}
-                      onChange={e => set("location")(e.target.value)}
+                      onChange={e => setLocation(e.target.value)}
                       style={inputStyle}
                       placeholder="City, Country"
                     />
@@ -383,13 +438,12 @@ export default function DevioSettings({ onBack }) {
                   <div>
                     <FieldLabel text="GitHub" />
                     <div style={{ position: "relative" }}>
-                      <span style={{ position: "absolute", left: 11, top: "50%", transform: "translateY(-50%)", color: "#334155", fontSize: 13, pointerEvents: "none" }}>⌥</span>
+                      <span style={{ position: "absolute", left: 11, top: "50%", transform: "translateY(-50%)", color: "#94a3b8", fontSize: 13, pointerEvents: "none" }}>⌥</span>
                       <input
                         className="field-input"
-                        value={data.github}
-                        onChange={e => set("github")(e.target.value)}
+                        onChange={e => setGithub(e.target.value)}
                         style={{ ...inputStyle, paddingLeft: 28 }}
-                        placeholder="username"
+                        placeholder="GitHub link"
                       />
                     </div>
                   </div>
@@ -404,7 +458,7 @@ export default function DevioSettings({ onBack }) {
               <Card>
                 <SectionHead icon="✦" label="Skills & Technologies" />
 
-                <p style={{ fontSize: 12, color: "#475569", lineHeight: 1.65, marginBottom: 18 }}>
+                <p style={{ fontSize: 12, color: "#94a3b8", lineHeight: 1.65, marginBottom: 18 }}>
                   Add the languages, frameworks, and tools you work with. These show on your public profile and help others find your snippets.
                 </p>
 
@@ -419,7 +473,7 @@ export default function DevioSettings({ onBack }) {
                   <div style={{
                     borderRadius: 10, padding: "14px 16px", marginBottom: 20,
                     background: "rgba(59,130,246,0.04)", border: "1px dashed rgba(59,130,246,0.15)",
-                    color: "#334155", fontSize: 12, textAlign: "center",
+                    color: "#94a3b8", fontSize: 12, textAlign: "center",
                   }}>
                     No skills added yet — pick some below or type your own.
                   </div>
@@ -467,7 +521,7 @@ export default function DevioSettings({ onBack }) {
                           <SkillPill key={s.name} name={s.name} onClick={addSkill} />
                         ))}
                         {suggestions.length === 0 && (
-                          <p style={{ fontSize: 12, color: "#334155" }}>No matches — press Enter to add "{skillSearch}" as a custom skill.</p>
+                          <p style={{ fontSize: 12, color: "#94a3b8" }}>No matches — press Enter to add "{skillSearch}" as a custom skill.</p>
                         )}
                       </div>
                     )
@@ -478,7 +532,7 @@ export default function DevioSettings({ onBack }) {
                           <div key={group.label} style={{ marginBottom: 16 }}>
                             <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8 }}>
                               <span style={{ width: 8, height: 8, borderRadius: "50%", background: group.color, display: "inline-block", flexShrink: 0 }} />
-                              <span style={{ fontSize: 10, fontWeight: 700, color: "#475569", letterSpacing: "0.07em", textTransform: "uppercase" }}>{group.label}</span>
+                              <span style={{ fontSize: 10, fontWeight: 700, color: "#fff", letterSpacing: "0.07em", textTransform: "uppercase" }}>{group.label}</span>
                             </div>
                             <div style={{ display: "flex", flexWrap: "wrap", gap: 7 }}>
                               {available.map(s => (
@@ -492,7 +546,7 @@ export default function DevioSettings({ onBack }) {
                 </div>
 
                 <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginTop: 22, flexWrap: "wrap", gap: 10 }}>
-                  <p style={{ fontSize: 11, color: "#334155" }}>{skills.length}/20 skills added</p>
+                  <p style={{ fontSize: 11, color: "#94a3b8" }}>{skills.length}/20 skills added</p>
                   <button className="btn-primary" onClick={save}>Save skills</button>
                 </div>
               </Card>

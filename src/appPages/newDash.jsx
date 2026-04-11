@@ -105,8 +105,8 @@ function EditorPreview() {
 const NAV_ITEMS = [
   { id: "overview",  icon: "⬡", label: "Overview", href:"/" },
   { id: "Explore",  icon: "◻", label: "Explore", href:"/explorer"  },
-    { id: "profile",  icon: "◻", label: "profile", href:"/profile"  },
-      { id: "settings",  icon: "◻", label: "settings", href:"/settings"  },
+    { id: "profile",  icon: "◻", label: "profile", href:`/profile`  },
+      { id: "settings",  icon: "◻", label: "settings", href:"/setting"  },
   { id: "editor",    icon: "⟨/⟩", label: "Editor" , href:"/editor" },
 ];
 
@@ -114,7 +114,7 @@ const NAV_ITEMS = [
 export default function DevioDashboard({ onBackToLanding, onOpenEditor }) {
   const {addcodes, user, data,  logout, getuser, uploadimg, codefiles} = useAuthStore();
   const [userData, setuserdata]= useState([])
-
+const [userPost, setUserPost]= useState([])
   const [avatarSrc,   setAvatarSrc]   = useState(user.profilepic);
   const [savedBadge,  setSavedBadge]  = useState(false);
   const [activeTab,   setActiveTab]   = useState("overview");
@@ -124,6 +124,24 @@ export default function DevioDashboard({ onBackToLanding, onOpenEditor }) {
   const fileRef = useRef(null);
   const checkSidebar = window.innerWidth > 764 ? sidebarCollapsed ? 80: 240: 20
   
+  async function getPosts() {
+    
+      const response = await
+      fetch(`${import.meta.env.VITE_API_URL}/api/posts/single-user-post?userId=${user._id}`,{
+      method: "GET",
+        mode: "cors",
+        headers:{
+                "content-Type": "application/json"
+            }
+      });
+      const res = await response.json();
+      if(res.success){
+        toast.success("retried")
+        setUserPost(res.data)
+      }else{
+        toast.error("fetching data failed")
+      }
+  }
   
   async function gethtml() {
       const response = await
@@ -136,6 +154,7 @@ export default function DevioDashboard({ onBackToLanding, onOpenEditor }) {
       });
       const res = await response.json();
       if(res.success){
+        getPosts();
         toast.success("successfully fetched codes!")
         setuserdata(res.data)
       }else{
@@ -143,6 +162,14 @@ export default function DevioDashboard({ onBackToLanding, onOpenEditor }) {
       }
       
   }
+  
+  const total = userPost.reduce((acc, item) => {
+  return {
+    likes: acc.likes + item.likes,
+    comments: acc.comments + item.comments
+  };
+}, { likes: 0, comments: 0 });
+  
   useEffect(() => {
     gethtml();
   }, []);
@@ -197,9 +224,9 @@ export default function DevioDashboard({ onBackToLanding, onOpenEditor }) {
   };
 const QUICK_STATS = [
   { label: `Snippets `,  val: userData.length,  icon: "◻", color: "#3b82f6" },
-  { label: "Reviews ",   val: "0", icon: "💬", color: "#22d3ee" },
-  { label: "Likes ",     val: "0",icon: "★",  color: "#f59e0b" },
-  { label: "Shared ",    val: "0",  icon: "⟳",  color: "#4ade80" },
+  { label: "Reviews ",   val: total.comments, icon: "💬", color: "#22d3ee" },
+  { label: "Likes ",     val: total.likes,icon: "★",  color: "#f59e0b" },
+  { label: "Shared ",    val: userPost.length,  icon: "⟳",  color: "#4ade80" },
 ];
  const handleLogout = async() => {
 		const response = await fetch(`${url}/signout`, {
@@ -353,7 +380,11 @@ const QUICK_STATS = [
           <nav className="flex flex-col gap-1 px-2 py-3 flex-1">
             {NAV_ITEMS.map(item => (
               <Link
-              to={item.href}
+              to={item.label == "profile" ? `${item.href + "?id="+user._id}` : item.href}
+              
+              target={item.label == "profile" ? "_blank" : ""}  
+              
+              
                 key={item.id}
                 className={`nav-item flex items-center gap-3 px-2.5 py-2.5 rounded-xl border border-transparent text-left w-full ${activeTab === item.id ? "active" : "text-gray-500 hover:text-gray-200"}`}
                 onClick={() => { setActiveTab(item.id); setSidebarOpen(false); }}
