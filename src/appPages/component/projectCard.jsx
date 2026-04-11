@@ -99,7 +99,14 @@ export default function ProjectCard({ project, onOpen }) {
       <div style={{ padding: "13px 14px 12px", flex: 1, display: "flex", flexDirection: "column" }}>
         {/* Author */}
         <div style={{ display: "flex", alignItems: "center", gap: 7, marginBottom: 8 }}>
+        
+            <Link
+            to={`/profile?id=${project.userId._id}`}
+            target="_blank" 
+            rel="noopener noreferrer"
+            onClick={e => e.stopPropagation()}>
           <Avatar name={project.userId.name} src={project.userId.profilepic} size={44} />
+          </Link>
           <span style={{ fontSize: 11, fontWeight: 700, color: "#60a5fa" }}>@{project.userId.name}</span>
           <span style={{ marginLeft: "auto", fontSize: 10, color: "#94a3b8" }}>{formatDate(project.createdAt)}</span>
         </div>

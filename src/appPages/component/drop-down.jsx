@@ -36,7 +36,7 @@ export default function NavDropdown({ onNavigate, NAV_PAGES }) {
       {open && (
         <div style={{
           position: "absolute", top: "calc(100% + 8px)", right: 0,
-          width: 220, zIndex: 900000000000000000000000000000,
+          width: 220, 
           background: "#09111f",
           border: "1px solid rgba(59,130,246,0.2)",
           borderRadius: 12,
@@ -44,7 +44,7 @@ export default function NavDropdown({ onNavigate, NAV_PAGES }) {
           overflow: "hidden",
           animation: "dd-in 0.18s ease",
         }}>
-          <div style={{zIndex: 9000000000000000000000000000000000000000000000000000000, padding: "8px 0" }}>
+          <div style={{zIndex: 786669000000000000000000000000000000000000000000000000000000, padding: "8px 0" }}>
             <div style={{ padding: "6px 14px 10px", borderBottom: "1px solid rgba(255,255,255,0.05)", marginBottom: 4 }}>
               <span style={{ fontSize: 10, fontWeight: 700, color: "#334155", letterSpacing: "0.08em", textTransform: "uppercase" }}>Navigate</span>
             </div>
@@ -54,6 +54,7 @@ export default function NavDropdown({ onNavigate, NAV_PAGES }) {
                 key={page.label}
                 onClick={() => { setOpen(false); onNavigate?.(page.label); }}
                 style={{
+                  zIndex: 900000000000000000000000099999999999900000,
                   width: "100%", display: "flex", alignItems: "center", gap: 12,
                   padding: "9px 14px", border: "none", cursor: "pointer", textAlign: "left",
                   background: page.active ? "rgba(59,130,246,0.1)" : "transparent",
